@@ -279,7 +279,7 @@ if __name__ == "__main__":
     logging.info("Saving processed X_train data to CSV file...")
     os.makedirs(tools.DATA_PROCESSED_DIR, exist_ok=True)
     target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "X_train.csv")
-    processed_x_train_df.to_csv(target_filename, index=True)
+    X_train.to_csv(target_filename, index=True)
     # Save the processed X_val data to a CSV file
     logging.info("Saving processed X_val data to CSV file...")
     target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "X_val.csv")

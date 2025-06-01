@@ -41,8 +41,7 @@ if not MODEL_DIR or not LOGS_DIR:
 # Check if the login and password are set
 ENSDATA_LOGIN = ENSDATA_LOGIN.strip() if ENSDATA_LOGIN else None
 ENSDATA_PASSWORD = ENSDATA_PASSWORD.strip() if ENSDATA_PASSWORD else None
-logging.info(f"ENSDATA_LOGIN: {ENSDATA_LOGIN}")
-logging.info(f"ENSDATA_PASSWORD: {'***' if ENSDATA_PASSWORD else None}")
+
 
 # Ensure that the login and password are not empty
 if not ENSDATA_LOGIN:

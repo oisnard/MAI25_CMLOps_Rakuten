@@ -2,7 +2,7 @@ from dotenv import find_dotenv, load_dotenv
 import os
 import logging
 import pandas as pd
-
+import pickle
 
 # Load environment variables from .env file
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -19,6 +19,8 @@ DATA_PROCESSED_DIR  = os.getenv("DATA_PROCESSED_DIR")
 
 MODEL_DIR = os.getenv("MODEL_DIR")
 LOGS_DIR = os.getenv("LOGS_DIR")
+
+FILE_MAPPING_DICT = "mapping_dict.pkl"
 
 # Ensure that the required environment variables are set
 logging.info("Checking environment variables...")
@@ -92,3 +94,51 @@ def load_ytrain_raw_data():
         raise FileNotFoundError(f"Y_train raw data file not found at {y_train_path}")
     df = pd.read_csv(y_train_path, index_col=0)
     return df
+
+
+
+def get_filepath_test(product_id, image_id):
+    """
+    Function to return the filepath of an image of X_test based on its product_id and image_id 
+    Assumpion : all test images are stored in the filepath C:\\Rakuten\\images\\image_test\\
+    """
+    filename = "image_" + str(image_id) + "_product_" + str(product_id) + ".jpg"
+    filepath = os.path.join(DATA_RAW_IMAGES_TEST_DIR, filename)
+    
+    return filepath
+
+def get_filepath_train(product_id, image_id):
+    """ 
+    Function to return the filepath of an image based on its product_id and image_id 
+    Assumpion : all train images are stored in the filepath C:\\Rakuten\\images\\image_train\\
+    """    
+    filename = "image_" + str(image_id) + "_product_" + str(product_id) + ".jpg"
+    filepath = os.path.join(DATA_RAW_IMAGES_TRAIN_DIR, filename)
+    
+    return filepath
+
+
+def save_mapping_dict(mapping_dict, filename=FILE_MAPPING_DICT):
+    """
+    Save the mapping dictionary to a pickle file.
+    """
+    os.makedirs(DATA_PROCESSED_DIR, exist_ok=True)
+    filepath = os.path.join(DATA_PROCESSED_DIR, filename)
+    with open(filepath, 'wb') as f:
+        pickle.dump(mapping_dict, f)
+    logging.info(f"Mapping dictionary saved to {filepath}")
+    return filepath
+
+def load_mapping_dict(filename=FILE_MAPPING_DICT):
+    """
+    Load the mapping dictionary from a pickle file.
+    """
+    filepath = os.path.join(DATA_PROCESSED_DIR, filename)
+    if not os.path.exists(filepath):
+        logging.error(f"Mapping dictionary file not found at {filepath}")
+        raise FileNotFoundError(f"Mapping dictionary file not found at {filepath}")
+    with open(filepath, 'rb') as f:
+        mapping_dict = pickle.load(f)
+    logging.info(f"Mapping dictionary loaded from {filepath}")
+    return mapping_dict 
+

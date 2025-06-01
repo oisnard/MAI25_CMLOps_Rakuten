@@ -1,6 +1,22 @@
 MAI25_CMLOPS : project Rakuten 
 ==============================
 
+# To load raw data set
+```bash
+python -m src.data.import_raw_data
+```
+
+# To make dataset for training
+```bash
+python -m src.data.make_dataset
+```
+
+# To launch unit tests
+```bash
+python -m pytest
+```
+
+# Structure of repository
 This project is a MLOps projects based on the ENS Data challenge Rakuten. The problem raised by the challenge is a multi modal classification based on texts and images.
 
 Project Organization

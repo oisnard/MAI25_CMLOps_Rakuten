@@ -2,9 +2,10 @@
 data_ratio : 0.1
 
 # Definition of the data split parameters
-split : 
-  test_size : 0.7
+data_split : 
+  validation_size : 0.15
+  test_size : 0.15
   random_state : 42
   shuffle : true
-  stratify : true 
+
 

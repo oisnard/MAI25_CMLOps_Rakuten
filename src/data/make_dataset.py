@@ -3,7 +3,7 @@ import os
 import src.tools.tools as tools 
 from bs4 import BeautifulSoup
 from bs4 import MarkupResemblesLocatorWarning
-import pickle
+from sklearn.model_selection import train_test_split
 import logging
 import warnings
 import yaml 
@@ -171,6 +171,44 @@ def get_dataset_from_ratio(X_train: pd.DataFrame,
     return X_train.iloc[:train_size], y_train.iloc[:train_size]
 
 
+def get_dataset_from_split(X_train: pd.DataFrame,
+                           y_train: pd.DataFrame,
+                           split_params: dict) -> tuple:
+    """
+    Split the dataset into training, validation, and test sets based on the provided split parameters.
+    
+    Args:
+        X_train (pd.DataFrame): The features DataFrame.
+        y_train (pd.DataFrame): The target DataFrame.
+        split_params (dict): The parameters for splitting the dataset.
+        
+    Returns:
+        tuple: A tuple containing the resulting X_train, X_val, X_test, y_train, y_val, y_test sets
+    """
+    if 'validation_size' not in split_params or 'test_size' not in split_params:
+        raise ValueError("Split parameters must contain 'validation_size' and 'test_size'")
+
+    # Split the data into training and temporary sets
+    X_temp, X_test, y_temp, y_test = train_test_split(
+        X_train, y_train, 
+        test_size=split_params['test_size'], 
+        random_state=split_params.get('random_state', 42), 
+        shuffle=split_params.get('shuffle', True), 
+        stratify=y_train.prdtypecode
+    )
+
+    # Split the temporary set into training and validation sets
+    X_train_final, X_val, y_train_final, y_val = train_test_split(
+        X_temp, y_temp,
+        test_size=split_params['validation_size'],
+        random_state=split_params.get('random_state', 42),
+        shuffle=split_params.get('shuffle', True),
+        stratify=split_params.get('stratify', None)
+    )
+
+    return X_train_final, X_val, X_test, y_train_final, y_val, y_test
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
@@ -205,9 +243,7 @@ if __name__ == "__main__":
     logging.info(f"Using ratio {ratio} for extracting training data.")
 
     # Get the subset of the dataset based on the ratio
-    print(x_train_df.shape, y_train_df.shape)
     x_train_df, y_train_df = get_dataset_from_ratio(x_train_df, y_train_df, ratio)
-    print(x_train_df.shape, y_train_df.shape)
 
 
     # Process the X_train raw data file
@@ -215,20 +251,59 @@ if __name__ == "__main__":
     # Process the raw data
     logging.info("Processing X_train raw data...")
     processed_x_train_df = process_raw_data(x_train_df, train_data=True)
-    # Save the processed data to a CSV file
-    logging.info("Saving processed X_train data to CSV file...")
-    os.makedirs(tools.DATA_PROCESSED_DIR, exist_ok=True)
-    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "X_train_processed.csv")
-    processed_x_train_df.to_csv(target_filename, index=True)
-    logging.info(f"Processed X_train data saved to {target_filename}")
-    print(processed_x_train_df.shape)
 
     # Process the raw data
     logging.info("Processing Y_train raw data...")
     processed_y_train_df = process_target_raw_data(y_train_df, mapping_dict)
-    print(processed_y_train_df.shape)
-    # Save the processed data to a CSV file
-    logging.info("Saving processed Y_train data to CSV file...")
-    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "Y_train_processed.csv")
-    processed_y_train_df.to_csv(target_filename, index=True)
-    logging.info(f"Processed Y_train data saved to {target_filename}")
+
+    logging.info("Split dateset into training, validation, and test sets...")
+    # Get the split parameters from the dataset parameters
+    split_params = dataset_params.get('data_split', {})
+    if not split_params:
+        logging.ERROR("No split parameters found in dataset parameters. Using default values.")
+        exit(1)
+    # Split the dataset into training, validation, and test sets
+
+    X_train, X_val, X_test, y_train, y_val, y_test = get_dataset_from_split(
+        processed_x_train_df, 
+        processed_y_train_df, 
+        split_params
+    )
+    logging.info(f"Dataset split into training, validation, and test sets with sizes: "
+                 f"X_train: {X_train.shape}, X_val: {X_val.shape}, X_test: {X_test.shape}, "
+                 f"y_train: {y_train.shape}, y_val: {y_val.shape}, y_test: {y_test.shape}")
+    # Save the processed data to CSV files
+    
+
+    # Save the dataset to CSV files
+    logging.info("Saving processed X_train data to CSV file...")
+    os.makedirs(tools.DATA_PROCESSED_DIR, exist_ok=True)
+    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "X_train.csv")
+    processed_x_train_df.to_csv(target_filename, index=True)
+    # Save the processed X_val data to a CSV file
+    logging.info("Saving processed X_val data to CSV file...")
+    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "X_val.csv")
+    X_val.to_csv(target_filename, index=True)
+    logging.info(f"Processed X_val data saved to {target_filename}")
+    # Save the processed X_test data to a CSV file
+    logging.info("Saving processed X_test data to CSV file...")
+    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "X_test.csv")
+    X_test.to_csv(target_filename, index=True)
+    logging.info(f"Processed X_test data saved to {target_filename}")
+    # Save the processed y_train data to a CSV file
+    logging.info("Saving processed y_train data to CSV file...")
+    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "y_train.csv")
+    y_train.to_csv(target_filename, index=True)
+    logging.info(f"Processed y_train data saved to {target_filename}")
+    # Save the processed y_val data to a CSV file
+    logging.info("Saving processed y_val data to CSV file...")
+    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "y_val.csv")
+    y_val.to_csv(target_filename, index=True)
+    logging.info(f"Processed y_val data saved to {target_filename}")
+    # Save the processed y_test data to a CSV file
+    logging.info("Saving processed y_test data to CSV file...")
+    target_filename = os.path.join(tools.DATA_PROCESSED_DIR, "y_test.csv")
+    y_test.to_csv(target_filename, index=True)
+    logging.info(f"Processed y_test data saved to {target_filename}")
+    logging.info("Dataset processing completed successfully.")
+    logging.info("All processed data saved to the processed data directory.")

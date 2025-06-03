@@ -2,7 +2,9 @@ from dotenv import find_dotenv, load_dotenv
 import os
 import logging
 import pandas as pd
-import pickle
+import json
+import yaml 
+ 
 
 # Load environment variables from .env file
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,7 +22,11 @@ DATA_PROCESSED_DIR  = os.getenv("DATA_PROCESSED_DIR")
 MODEL_DIR = os.getenv("MODEL_DIR")
 LOGS_DIR = os.getenv("LOGS_DIR")
 
-FILE_MAPPING_DICT = "mapping_dict.pkl"
+FILE_MAPPING_DICT = "mapping_dict.json"  # File to save the mapping dictionary
+
+
+NUM_CLASSES = 27  # Number of classes for the classification task
+
 
 # Ensure that the required environment variables are set
 logging.info("Checking environment variables...")
@@ -116,28 +122,65 @@ def get_filepath_train(product_id, image_id):
     
     return filepath
 
-
+# To save mapping of prdtypecode to integer between 0 and 26
 def save_mapping_dict(mapping_dict, filename=FILE_MAPPING_DICT):
     """
-    Save the mapping dictionary to a pickle file.
+    Save the mapping dictionary to a json file.
     """
     os.makedirs(DATA_PROCESSED_DIR, exist_ok=True)
     filepath = os.path.join(DATA_PROCESSED_DIR, filename)
-    with open(filepath, 'wb') as f:
-        pickle.dump(mapping_dict, f)
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(mapping_dict, f, ensure_ascii=False, indent=4)
     logging.info(f"Mapping dictionary saved to {filepath}")
     return filepath
 
 def load_mapping_dict(filename=FILE_MAPPING_DICT):
     """
-    Load the mapping dictionary from a pickle file.
+    Load the mapping dictionary from a json file.
+    { prdtypecode : integer (between 0 and 26)}
     """
     filepath = os.path.join(DATA_PROCESSED_DIR, filename)
     if not os.path.exists(filepath):
         logging.error(f"Mapping dictionary file not found at {filepath}")
         raise FileNotFoundError(f"Mapping dictionary file not found at {filepath}")
-    with open(filepath, 'rb') as f:
-        mapping_dict = pickle.load(f)
+    with open(filepath, 'r') as f:
+        mapping_dict = json.load(f)
     logging.info(f"Mapping dictionary loaded from {filepath}")
-    return mapping_dict 
 
+    # Convert keys and values to integers
+    results = {int(k): int(v) for k, v in mapping_dict.items()}
+    return results 
+
+
+def load_reverse_mapping_dict(filename=FILE_MAPPING_DICT):
+    """
+    Load the reverse mapping dictionary from a json file.
+    {integer (between 0 and 26) : prdtypecode}
+
+    """
+    filepath = os.path.join(DATA_PROCESSED_DIR, filename)
+    if not os.path.exists(filepath):
+        logging.error(f"Mapping dictionary file not found at {filepath}")
+        raise FileNotFoundError(f"Mapping dictionary file not found at {filepath}")
+    with open(filepath, 'r') as f:
+        mapping_dict = json.load(f)
+    logging.info(f"Mapping dictionary loaded from {filepath}")
+
+    # Convert keys and values to integers
+    results = {int(v): int(k) for k, v in mapping_dict.items()}
+    return results 
+
+
+def load_dataset_params_from_yaml(file_path: str="params.yaml") -> dict:
+    """
+    Load dataset parameters from a YAML file.
+    
+    Args:
+        file_path (str): The path to the YAML file.
+        
+    Returns:
+        dict: A dictionary containing the dataset parameters.
+    """
+    with open(file_path, 'r') as file:
+        params = yaml.safe_load(file)
+    return params   

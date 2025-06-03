@@ -9,3 +9,17 @@ data_split :
   shuffle : true
 
 
+training_parameters :
+  epochs : 1
+  batch_size : 16
+
+optimizer_parameters :
+  learning_rate : 2e-5
+  weighting_decay : 1e-8
+  amsgrad : true
+
+models_parameters :
+  model_name : "almanach/camembert-base"
+  max_length : 16
+
+

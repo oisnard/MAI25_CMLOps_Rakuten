@@ -6,7 +6,7 @@ from bs4 import MarkupResemblesLocatorWarning
 from sklearn.model_selection import train_test_split
 import logging
 import warnings
-import yaml 
+
 
 # Suppress warnings from BeautifulSoup
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
@@ -97,7 +97,7 @@ def get_mapping_dict(df: pd.DataFrame) -> dict:
     target_prdtypecode = range(len(list_prdtypecode))
 
     # Create a mapping from the original prdtypecode to the target prdtypecode
-    mapping_dict = {original: target for original, target in zip(list_prdtypecode, target_prdtypecode)}
+    mapping_dict = {int(original) : int(target) for original, target in zip(list_prdtypecode, target_prdtypecode)}
     
     return mapping_dict
 
@@ -129,20 +129,6 @@ def process_target_raw_data(df: pd.DataFrame, mapping_dict: dict) -> pd.DataFram
 
     return df   
 
-
-def load_dataset_params_from_yaml(file_path: str="params.yaml") -> dict:
-    """
-    Load dataset parameters from a YAML file.
-    
-    Args:
-        file_path (str): The path to the YAML file.
-        
-    Returns:
-        dict: A dictionary containing the dataset parameters.
-    """
-    with open(file_path, 'r') as file:
-        params = yaml.safe_load(file)
-    return params   
 
 
 # A retravailler pour prendre au fur et à mesure les données selon le ratio
@@ -213,7 +199,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     # Load dataset parameters from YAML file
-    dataset_params = load_dataset_params_from_yaml()
+    dataset_params = tools.load_dataset_params_from_yaml()
     logging.info(f"Dataset parameters loaded: {dataset_params}")
 
     # Process the  raw data file

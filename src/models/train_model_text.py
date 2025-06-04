@@ -88,6 +88,12 @@ if __name__ == "__main__":
         logging.error(f"Invalid BATCH_SIZE value: {BATCH_SIZE}. It should be a positive integer.")
         raise ValueError(f"Invalid BATCH_SIZE value: {BATCH_SIZE}. It should be a positive integer.")
 
+    # Load the nb of epochs from params
+    EPOCHS = params['training_parameters']['epochs']
+    if not isinstance(EPOCHS, int) or EPOCHS <= 0:
+        logging.error(f"Invalid EPOCHS value: {EPOCHS}. It should be a positive integer.")
+        raise ValueError(f"Invalid EPOCHS value: {EPOCHS}. It should be a positive integer.")
+
 
     # Load datasets
     logging.info("Loading datasets...")
@@ -126,7 +132,7 @@ if __name__ == "__main__":
 
     history = model.fit(
         train_dataset,  # Pass inputs as a dictionary
-        epochs=1,
+        epochs=EPOCHS,
         batch_size=BATCH_SIZE,
         validation_data = val_dataset)
     

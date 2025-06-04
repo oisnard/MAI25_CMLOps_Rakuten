@@ -117,8 +117,6 @@ if __name__ == "__main__":
     y_pred = np.argmax(predictions, -1)
     logging.info("Predicted classes obtained successfully.")
     # Convert y_test to numpy array for evaluation
-    print(y_pred)
-
     # Load the mapping dictionary to convert integer labels back to prdtypecode
     dict_mapping_reverse = tools.load_reverse_mapping_dict()
     if dict_mapping_reverse is None:

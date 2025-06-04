@@ -98,6 +98,5 @@ data/
 # Artifacts
 /models/
 
-./.dvc/config 
 ./.dvc/config.local
 /data

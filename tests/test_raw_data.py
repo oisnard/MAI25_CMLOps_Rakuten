@@ -17,7 +17,7 @@ def xtest_df():
     return tools.load_xtest_raw_data()
 
 # test if the X_train raw data file is a valid pandas DataFrame 
-def test_xtrain_raw_dataframe(xtrain_df):
+def test_xtrain_raw_dataframe_is_valid(xtrain_df):
     """
     Test if the X_train raw data file is a valid pandas DataFrame.
     """
@@ -53,7 +53,7 @@ def test_xtrain_raw_images_presence(xtrain_df):
 
 
 # test if the X_test raw data file is a valid pandas DataFrame 
-def test_xtest_raw_dataframe(xtest_df):
+def test_xtest_raw_dataframe_is_valid(xtest_df):
     """
     Test if the X_test raw data file is a valid pandas DataFrame.
     """
@@ -89,7 +89,7 @@ def test_xtest_raw_images_presence(xtest_df):
 
 
 # test if the Y_train raw data file is a valid pandas DataFrame
-def test_ytrain_raw_dataframe():
+def test_ytrain_raw_dataframe_is_valid():
     """
     Test if the Y_train raw data file is a valid pandas DataFrame.
     """

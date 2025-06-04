@@ -100,3 +100,4 @@ data/
 
 ./.dvc/config 
 ./.dvc/config.local
+/data

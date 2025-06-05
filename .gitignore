@@ -100,3 +100,4 @@ data/
 
 ./.dvc/config.local
 /data
+/models

@@ -170,6 +170,7 @@ def test_Xtrain_ytrain_coherency(xtrain_df, ytrain_df):
     Test if X_train and y_train have referring to the same nb of products
     """
     assert xtrain_df.shape[0] == ytrain_df.shape[0], "X_train and y_train should have same nb of lines"
+    assert xtrain_df.index.equals(ytrain_df.index), "X_train and y_train should have the same index"
 
 
 # Test if X_val and y_val have coherent shape
@@ -178,6 +179,7 @@ def test_Xval_yval_coherency(xval_df, yval_df):
     Test if X_val and y_val have referring to the same nb of products
     """
     assert xval_df.shape[0] == yval_df.shape[0], "X_val and y_val should have same nb of lines"
+    assert xval_df.index.equals(yval_df.index), "X_val and y_val should have the same index"
 
 # Test if X_test and y_test have coherent shape
 def test_Xtest_ytest_coherency(xtest_df, ytest_df):
@@ -185,7 +187,7 @@ def test_Xtest_ytest_coherency(xtest_df, ytest_df):
     Test if X_test and y_test have referring to the same nb of products
     """
     assert xtest_df.shape[0] == ytest_df.shape[0], "X_test and y_test should have same nb of lines"
-
+    assert xtest_df.index.equals(ytest_df.index), "X_test and y_test should have the same index"
 
 
 # test if the images referred in X_train processed data are present in the raw data directory
@@ -234,3 +236,5 @@ def test_xtest_images_presence(xtest_df):
             nb_missing_files += 1
             print(f"Missing file: {image_path}")
     assert nb_missing_files == 0, f"Found {nb_missing_files} missing files in the raw data directory."
+
+

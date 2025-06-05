@@ -1,6 +1,8 @@
 from transformers import TFCamembertModel, CamembertTokenizer
 import tensorflow as tf
 
+IMG_SIZE = 500
+
 
 def load_encode_text_function(MODEL_NAME="almanach/camembert-base", MAX_LEN=32) -> callable:
     """
@@ -71,3 +73,51 @@ def build_cam_model(MODEL_NAME="almanach/camembert-base", MAX_LEN=32, NUM_CLASSE
 
 
 
+
+
+# Define a function to load and preprocess an image based on its file path
+def load_and_preprocess_image_from_path(filepath):
+    image = tf.io.read_file(filepath)
+    image = tf.image.decode_jpeg(image, channels=3)
+    image = tf.image.resize(image, [IMG_SIZE, IMG_SIZE])
+    image = tf.keras.applications.efficientnet.preprocess_input(image)
+    return image
+
+# Build an model based on EfficientNetB1
+def build_model_image_efficientNetB1(num_classes: int, nb_trainable_layers: int) -> tf.keras.Model:
+    #
+    inputs = tf.keras.layers.Input(shape=(), dtype=tf.string)
+ 
+    # Use tf.map_fn to apply the image loading and preprocessing function to each path in the batch
+    def load_and_preprocess_batch(paths):
+        return tf.map_fn(
+            load_and_preprocess_image_from_path,
+            paths,
+            fn_output_signature=tf.TensorSpec(shape=(IMG_SIZE, IMG_SIZE, 3), dtype=tf.float32)
+        )
+
+    # Lambda avec forme de sortie spécifiée
+    images = tf.keras.layers.Lambda(
+        load_and_preprocess_batch,
+        output_shape=(IMG_SIZE, IMG_SIZE, 3)
+    )(inputs)
+
+
+    base_model = tf.keras.applications.EfficientNetB1(weights='imagenet', 
+                                                      include_top=False, 
+                                                      input_shape=(IMG_SIZE, IMG_SIZE, 3))
+    base_model.trainable = False
+
+    if nb_trainable_layers > 0:
+        for layer in base_model.layers[-nb_trainable_layers:]:
+            if not isinstance(layer, tf.keras.layers.BatchNormalization):
+                layer.trainable = True
+
+    x = base_model(images) #, training=False)
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Dropout(0.1)(x)
+    x = tf.keras.layers.Dense(units=1024, activation="relu")(x)
+    x = tf.keras.layers.Dropout(0.1)(x)
+    outputs = tf.keras.layers.Dense(num_classes, activation='softmax')(x)
+    model = tf.keras.Model(inputs, outputs)
+    return model

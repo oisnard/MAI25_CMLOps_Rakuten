@@ -1,15 +1,13 @@
-import tensorflow as tf
 import pandas as pd
-import src.tools.tools as tools 
-import src.models.models as models
-from src.models.metrics import SparseF1Score
+import tensorflow as tf
+from tensorflow.keras.applications import EfficientNetB1 
 import os 
 import logging 
+import src.tools.tools as tools
+import src.models.models as models
+import src.models.metrics as metrics
 
-
-
-
-
+# Function to load datasets
 def load_datasets() -> tuple:
     """
     Function to load the datasets for training and validation.
@@ -65,22 +63,20 @@ def load_datasets() -> tuple:
     return X_train, X_val, y_train, y_val
 
 
+
 if __name__ == "__main__":
-    # Set logging level
     logging.basicConfig(level=logging.INFO)
+    logging.info("Building model based on efficientNetB1...")
 
     # Load dataset parameters from YAML file
-    params = tools.load_dataset_params_from_yaml()
+    params = tools.load_dataset_params_from_yaml()    
 
-    # Load the MAX LEN and MODEL_NAME from params
-    MAX_LEN = params['models_parameters']['Camembert']['max_length']
-    if not isinstance(MAX_LEN, int) or MAX_LEN <= 0:
-        logging.error(f"Invalid max_len value: {MAX_LEN}. It should be a positive integer.")
-        raise ValueError(f"Invalid max_len value: {MAX_LEN}. It should be a positive integer.")
-    MODEL_NAME = params['models_parameters']['Camembert']['model_name']
-    if not isinstance(MODEL_NAME, str) or not MODEL_NAME:   
-        logging.error(f"Invalid MODEL_NAME value: {MODEL_NAME}. It should be a non-empty string.")
-        raise ValueError(f"Invalid MODEL_NAME value: {MODEL_NAME}. It should be a non-empty string.")
+    # Load the number of classes, the number of trainable layers, batch_size and nb of epochs from params
+    num_classes = tools.NUM_CLASSES
+    nb_trainable_layers = params['models_parameters']['EfficientNetB1']['nb_trainable_layers']
+    if not isinstance(nb_trainable_layers, int) or nb_trainable_layers < 0:
+        logging.error(f"Invalid nb_trainable_layers value: {nb_trainable_layers}. It should be a non-negative integer.")
+        raise ValueError(f"Invalid nb_trainable_layers value: {nb_trainable_layers}. It should be a non-negative integer.")
 
     # Load BATCH_SIZE from params
     BATCH_SIZE = params['training_parameters']['batch_size']
@@ -97,51 +93,59 @@ if __name__ == "__main__":
 
     # Load datasets
     logging.info("Loading datasets...")
-    # Load the datasets for training, validation, and testing
     X_train, X_val, y_train, y_val = load_datasets()    
     logging.info(f"Shapes - X_train: {X_train.shape}, y_train: {y_train.shape}, X_val: {X_val.shape}, y_val: {y_val.shape}")
+    # Check if the datasets are not empty
+    if X_train.empty or y_train.empty or X_val.empty or y_val.empty:
+        logging.error("One or more datasets are empty.")
+        raise ValueError("One or more datasets are empty.")
 
-
-    # Preprocess text data
-    logging.info("Preprocessing text data...")
-    # Tokenize the text data using the tokenizer
-    # Define batch size
-    if not isinstance(BATCH_SIZE, int) or BATCH_SIZE <= 0:
-        logging.error(f"Invalid BATCH_SIZE value: {BATCH_SIZE}. It should be a positive integer.")
-        raise ValueError(f"Invalid BATCH_SIZE value: {BATCH_SIZE}. It should be a positive integer.")
-
-    # Setting the encode function based on the MODEL_NAME and MAX_LEN 
-    encode = models.load_encode_text_function(MODEL_NAME=MODEL_NAME, MAX_LEN=MAX_LEN)
-    # Convert the encoded data and labels to TensorFlow datasets
     logging.info("Creating TensorFlow datasets for training and validation...")
     # Convert the training and validation datasets to TensorFlow datasets
-    train_dataset = tf.data.Dataset.from_tensor_slices((X_train.feature.tolist(), 
-                                                        y_train.prdtypecode.tolist())
-                                                        ).map(encode).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
-    val_dataset = tf.data.Dataset.from_tensor_slices((X_val.feature.tolist(),
-                                                        y_val.prdtypecode.tolist())
-                                                        ).map(encode).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
-    # Construction du modèle
-    model = models.build_cam_model(MODEL_NAME=MODEL_NAME, MAX_LEN=MAX_LEN, NUM_CLASSES=tools.NUM_CLASSES)
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(5e-5),
-        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-        metrics=["accuracy", SparseF1Score(num_classes=tools.NUM_CLASSES, average='weighted')]  
-    )
+    train_dataset = tf.data.Dataset.from_tensor_slices((X_train.image_path.tolist(), y_train.prdtypecode.tolist()))
+    train_dataset = train_dataset.shuffle(1000).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+
+    val_dataset = tf.data.Dataset.from_tensor_slices((X_val.image_path.tolist(), y_val.prdtypecode.tolist()))
+    val_dataset = val_dataset.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+    # Check if the datasets are not empty
+    if train_dataset is None or val_dataset is None:
+        logging.error("One or more datasets are empty.")
+        raise ValueError("One or more datasets are empty.")
 
 
-    history = model.fit(
-        train_dataset,  # Pass inputs as a dictionary
-        epochs=EPOCHS,
-        batch_size=BATCH_SIZE,
-        validation_data = val_dataset)
-    
-    logging.info("Training completed.")
+    # Build the model
+    logging.info("Building the EfficientNetB1 model...")
+    model = models.build_model_image_efficientNetB1(num_classes=num_classes, nb_trainable_layers=nb_trainable_layers)
+
+    logging.info("Model built successfully.")
+
+    # Compile the model
+    logging.info("Compiling the model...")
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
+                  loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                  metrics=['accuracy', metrics.SparseF1Score(num_classes=num_classes, average='weighted')])
+    logging.info("Model compiled successfully.")
+    # Train the model
+    logging.info("Training the model...")
+    history = model.fit(train_dataset, epochs=EPOCHS, validation_data=val_dataset)
+    logging.info("Model training completed.")
     # Save the model
-    model.save_weights(os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5"))
-    logging.info("Model weights saved successfully.")
+    model.save_weights(os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5"))
+    logging.info("Model weightssaved successfully.")
     # Save the model architecture
     model_json = model.to_json()
-    with open(os.path.join(tools.MODEL_DIR, "camembert_model.json"), "w") as json_file:
+    with open(os.path.join(tools.MODEL_DIR, "efficientNetB1_model.json"), "w") as json_file:
         json_file.write(model_json)
     logging.info("Model architecture saved successfully.")
+    # Log the training history
+    for key, values in history.history.items():
+        logging.info(f"Training history - {key}: {values}")
+    # Log the final training and validation accuracy and F1 score
+    final_accuracy = history.history["accuracy"][-1]
+    final_val_accuracy = history.history["val_accuracy"][-1]
+    final_f1 = history.history["f1_score"][-1]
+    final_val_f1 = history.history["val_f1_score"][-1]
+    logging.info(f"Final training accuracy: {final_accuracy}")
+    logging.info(f"Final validation accuracy: {final_val_accuracy}")
+    logging.info(f"Final training F1 score: {final_f1}")
+    logging.info(f"Final validation F1 score: {final_val_f1}")

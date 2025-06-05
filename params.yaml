@@ -10,7 +10,7 @@ data_split :
 
 
 training_parameters :
-  epochs : 1
+  epochs : 2
   batch_size : 16
 
 optimizer_parameters :
@@ -19,7 +19,11 @@ optimizer_parameters :
   amsgrad : true
 
 models_parameters :
-  model_name : "almanach/camembert-base"
-  max_length : 16
+  Camembert :
+    model_name : "almanach/camembert-base"
+    max_length : 16
+  EfficientNetB1 : 
+    nb_trainable_layers : 0
+
 
 

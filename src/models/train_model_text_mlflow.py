@@ -64,9 +64,10 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     params = tools.load_dataset_params_from_yaml()
-    MAX_LEN = params['models_parameters']['max_length']
-    MODEL_NAME = params['models_parameters']['model_name']
+    MAX_LEN = params['models_parameters']['camembert']['max_length']
+    MODEL_NAME = params['models_parameters']['camembert']['model_name']
     BATCH_SIZE = params['training_parameters']['batch_size']
+    EPOCHS = params['training_parameters']['epochs']
 
     logging.info("Loading datasets...")
     X_train, X_val, y_train, y_val = load_datasets()    
@@ -93,7 +94,7 @@ if __name__ == "__main__":
 
         history = model.fit(
             train_dataset,
-            epochs=1,
+            epochs=EPOCHS,
             batch_size=BATCH_SIZE,
             validation_data=val_dataset
         )
@@ -102,8 +103,8 @@ if __name__ == "__main__":
 
         final_accuracy = history.history["accuracy"][-1]
         final_val_accuracy = history.history["val_accuracy"][-1]
-        final_f1 = history.history["sparse_f1_score"][-1]
-        final_val_f1 = history.history["val_sparse_f1_score"][-1]
+        final_f1 = history.history["f1_score"][-1]
+        final_val_f1 = history.history["val_f1_score"][-1]
 
         mlflow.log_metric("train_accuracy", final_accuracy)
         mlflow.log_metric("val_accuracy", final_val_accuracy)

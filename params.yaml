@@ -10,7 +10,7 @@ data_split :
 
 
 training_parameters :
-  epochs : 2
+  epochs : 1
   batch_size : 16
 
 optimizer_parameters :

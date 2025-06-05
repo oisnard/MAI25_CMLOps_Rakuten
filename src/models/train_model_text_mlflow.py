@@ -64,6 +64,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     params = tools.load_dataset_params_from_yaml()
+    DATA_RATIO = params['data_ratio']
     MAX_LEN = params['models_parameters']['Camembert']['max_length']
     MODEL_NAME = params['models_parameters']['Camembert']['model_name']
     BATCH_SIZE = params['training_parameters']['batch_size']
@@ -73,11 +74,19 @@ if __name__ == "__main__":
     X_train, X_val, y_train, y_val = load_datasets()    
     logging.info(f"Shapes - X_train: {X_train.shape}, y_train: {y_train.shape}, X_val: {X_val.shape}, y_val: {y_val.shape}")
 
+    logging.info("Setting experiment...")
     mlflow.set_experiment("Rakuten_Text_Model")
-    with mlflow.start_run():
+    
+    # Start MLflow run
+    logging.info("Starting MLflow run...")
+#    mlflow.tensorflow.autolog()  # A éviter - génère des incompatibilités entre keras 3.x et transformers
+    with mlflow.start_run() as run:
+        logging.info(f"MLflow run started. Run ID: {run.info.run_id}")
+        mlflow.log_param("data_ratio", DATA_RATIO)
         mlflow.log_param("model_name", MODEL_NAME)
         mlflow.log_param("max_length", MAX_LEN)
         mlflow.log_param("batch_size", BATCH_SIZE)
+        mlflow.log_param("epochs", EPOCHS)
 
         encode = models.load_encode_text_function(MODEL_NAME=MODEL_NAME, MAX_LEN=MAX_LEN)
         train_dataset = tf.data.Dataset.from_tensor_slices((X_train.feature.tolist(), y_train.prdtypecode.tolist()))

@@ -6,7 +6,7 @@ from src.models.metrics import SparseF1Score
 import os 
 import logging 
 import mlflow
-import mlflow.tensorflow
+#import mlflow.tensorflow # --> A retirer, génère des incompatibilités entre keras 3.x et transformers
 
 def load_datasets() -> tuple:
     """
@@ -64,8 +64,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     params = tools.load_dataset_params_from_yaml()
-    MAX_LEN = params['models_parameters']['camembert']['max_length']
-    MODEL_NAME = params['models_parameters']['camembert']['model_name']
+    MAX_LEN = params['models_parameters']['Camembert']['max_length']
+    MODEL_NAME = params['models_parameters']['Camembert']['model_name']
     BATCH_SIZE = params['training_parameters']['batch_size']
     EPOCHS = params['training_parameters']['epochs']
 

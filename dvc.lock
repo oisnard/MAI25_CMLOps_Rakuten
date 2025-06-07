@@ -46,3 +46,57 @@ stages:
       md5: d12fb6e8d1d11dec4b32bf8be8dc1f62.dir
       size: 5586994
       nfiles: 7
+  train_model:
+    cmd: python -m src.models.train_model_mlflow
+    deps:
+    - path: data/processed/
+      hash: md5
+      md5: d12fb6e8d1d11dec4b32bf8be8dc1f62.dir
+      size: 5586994
+      nfiles: 7
+    - path: params.yaml
+      hash: md5
+      md5: 77aa10f58b282aa4196f1570ce916106
+      size: 1286
+    - path: src/models/metrics.py
+      hash: md5
+      md5: e35fa89d2c4dcbd2af7205455eeea8d0
+      size: 2986
+    - path: src/models/models.py
+      hash: md5
+      md5: 0ce3edc42b0e2ee4eb34c57e432491a0
+      size: 4822
+    - path: src/models/train_model_image_mlflow.py
+      hash: md5
+      md5: 155b56743c2c3e98b226c629840252dc
+      size: 10201
+    - path: src/models/train_model_mlflow.py
+      hash: md5
+      md5: 1e5371078b132b6739ec6c56fb7fad18
+      size: 1224
+    - path: src/models/train_model_text_mlflow.py
+      hash: md5
+      md5: 59d6b99ff51f8605356b09afc5ab7e00
+      size: 6888
+    - path: src/tools/tools.py
+      hash: md5
+      md5: f1bf63d6961f632e765dccac48df2e0f
+      size: 6983
+    params:
+      params.yaml:
+        model_selection.model_type: text
+        models_parameters.Camembert.max_length: 16
+        models_parameters.Camembert.model_name: almanach/camembert-base
+        models_parameters.EfficientNetB1.model_name: EfficientNetB1
+        models_parameters.EfficientNetB1.nb_trainable_layers: 0
+        optimizer_parameters.amsgrad: true
+        optimizer_parameters.learning_rate: 2e-05
+        optimizer_parameters.weighting_decay: 1e-08
+        training_parameters.batch_size: 16
+        training_parameters.epochs: 1
+    outs:
+    - path: models/
+      hash: md5
+      md5: 6a4d72123ee143d42c1de31322a18b32.dir
+      size: 1436881529
+      nfiles: 2

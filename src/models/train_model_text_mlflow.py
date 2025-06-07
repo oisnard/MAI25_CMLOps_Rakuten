@@ -60,7 +60,7 @@ def load_datasets() -> tuple:
 
     return X_train, X_val, y_train, y_val
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO)
 
     params = tools.load_dataset_params_from_yaml()
@@ -133,3 +133,19 @@ if __name__ == "__main__":
         mlflow.log_artifact(weights_path)
         mlflow.log_artifact(archi_path)
         mlflow.log_artifact("params.yaml")
+        mlflow.log_artifact("src/models/models.py")
+)
+
+
+
+if __name__ == "__main__":
+    main()
+else:
+    import inspect
+
+    # If this script is imported, run the main function only if it is called from train_model.py
+    stack = inspect.stack()
+    for frame in stack:
+        if "train_model_mlflow.py" in frame.filename:
+            main()
+            break    

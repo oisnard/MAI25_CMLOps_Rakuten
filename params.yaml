@@ -30,10 +30,11 @@ models_parameters :
     model_name : "almanach/camembert-base"
     max_length : 16
   EfficientNetB1 : 
+    model_name : "EfficientNetB1"
     nb_trainable_layers : 0
 
 # Selection of model type for training and evaluation
 # model_type values can be "image" or "text" or "merged" (merged model not implemented yet)
 model_selection :
-  model_type : "text"
+  model_type : "image"
 

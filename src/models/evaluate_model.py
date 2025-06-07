@@ -21,9 +21,9 @@ if __name__ == "__main__":
         raise ValueError(f"Invalid model type: {MODEL_TYPE}. It should be one of ['text', 'image', 'merged'].")
     logger.info(f"Model type selected: {MODEL_TYPE}")
     if MODEL_TYPE == 'text':
-        import src.models.train_model_text
+        import src.models.evaluate_model_text
     elif MODEL_TYPE == 'image':
-        import src.models.train_model_image
+        import src.models.evaluate_model_image
     elif MODEL_TYPE == 'merged':
-        logger.info("Merged model training is not implemented yet.")
-        raise NotImplementedError("Merged model training is not implemented yet.")
+        logger.info("Merged model evaluation is not implemented yet.")
+        raise NotImplementedError("Merged model evaluation is not implemented yet.")

@@ -27,10 +27,10 @@ def load_dataset() -> tuple:
     except Exception as e:
         logging.error(f"An error occurred while loading datasets: {e}")
         raise
-    # Ensure that the 'feature' column exists in X_test
-    if 'feature' not in X_test.columns:
-        logging.error("The 'feature' column is missing in the X_test dataset.")
-        raise ValueError("The 'feature' column is missing in the X_test dataset.")
+    # Ensure that the 'image_path' column exists in X_test
+    if 'image_path' not in X_test.columns:
+        logging.error("The 'image_path' column is missing in the X_test dataset.")
+        raise ValueError("The 'image_path' column is missing in the X_test dataset.")
     # Ensure that the 'prdtypecode' column exists in y_test
     if 'prdtypecode' not in y_test.columns:
         logging.error("The 'prdtypecode' column is missing in the y_test dataset.")
@@ -39,14 +39,13 @@ def load_dataset() -> tuple:
     if not pd.api.types.is_integer_dtype(y_test['prdtypecode']):
         logging.error("The 'prdtypecode' column must be of integer type.")
         raise ValueError("The 'prdtypecode' column must be of integer type.")
-    # Ensure that the 'feature' column is of string type
-    if not pd.api.types.is_string_dtype(X_test['feature']):
-        logging.error("The 'feature' column must be of string type.")
-        raise ValueError("The 'feature' column must be of string type.")
+    # Ensure that the 'image_path' column is of string type
+    if not pd.api.types.is_string_dtype(X_test['image_path']):
+        logging.error("The 'image_path' column must be of string type.")
+        raise ValueError("The 'image_path' column must be of string type.")
     return X_test, y_test
 
-
-if __name__ == "__main__":
+def main():
     # Set up logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -144,4 +143,16 @@ if __name__ == "__main__":
     report_json_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report_model_img.json")
     with open(report_json_path, "w", encoding="utf-8") as f:
         json.dump(report_dict, f, ensure_ascii=True, indent=4)
-    logging.info(f"Classification report saved to {report_json_path}")
+    logging.info(f"Classification report saved to {report_json_path}")    
+
+if __name__ == "__main__":
+    main()
+else:
+    import inspect
+
+    # If this script is imported, run the main function only if it is called from evaluate_model.py
+    stack = inspect.stack()
+    for frame in stack:
+        if "evaluate_model.py" in frame.filename:
+            main()
+            break

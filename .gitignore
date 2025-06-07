@@ -97,6 +97,7 @@ target/
 
 # Artifacts
 /models/
+/data/raw/
 
 ./.dvc/config.local
 /models

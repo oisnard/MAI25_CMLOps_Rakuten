@@ -64,8 +64,7 @@ def load_datasets() -> tuple:
         raise ValueError("The 'feature' column contains null values.")
     return X_train, X_val, y_train, y_val
 
-
-if __name__ == "__main__":
+def main():
     # Set logging level
     logging.basicConfig(level=logging.INFO)
 
@@ -145,3 +144,16 @@ if __name__ == "__main__":
     with open(os.path.join(tools.MODEL_DIR, "camembert_model.json"), "w") as json_file:
         json_file.write(model_json)
     logging.info("Model architecture saved successfully.")
+   
+
+if __name__ == "__main__":
+    main()
+else:
+    import inspect
+
+    # If this script is imported, run the main function only if it is called from train_model.py
+    stack = inspect.stack()
+    for frame in stack:
+        if "train_model.py" in frame.filename:
+            main()
+            break

@@ -44,9 +44,7 @@ def load_dataset() -> tuple:
         raise ValueError("The 'feature' column must be of string type.")
     return X_test, y_test
 
-
-
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
@@ -133,7 +131,7 @@ if __name__ == "__main__":
     # Convert report to DataFrame for better visualization
     report_df = pd.DataFrame(report_dict).transpose()
     # Save the classification report to a CSV file
-    report_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report.csv")
+    report_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report_text.csv")
     report_df.to_csv(report_path)
     logging.info(f"Classification report saved to {report_path}")
     logging.info("Prediction process completed successfully.")
@@ -144,16 +142,27 @@ if __name__ == "__main__":
         'image_id': X_test.index,
         'predicted_prdtypecode': y_pred_prdtypecode
     })
-    predictions_path = os.path.join(tools.DATA_PROCESSED_DIR, "predictions.csv")
+    predictions_path = os.path.join(tools.DATA_PROCESSED_DIR, "predictions_text.csv")
     predictions_df.to_csv(predictions_path, index=False)
     logging.info(f"Predictions saved to {predictions_path}")
 
     # Save the classification report to a JSON file
     logging.info("Saving classification report to JSON file...")
     # Save the classification report as a JSON file
-    report_json_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report.json")
+    report_json_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report_text.json")
     with open(report_json_path, "w", encoding="utf-8") as f:
         json.dump(report_dict, f, ensure_ascii=True, indent=4)
-    logging.info(f"Classification report saved to {report_json_path}")
-    
+    logging.info(f"Classification report saved to {report_json_path}")    
+
+if __name__ == "__main__":
+    main()
+else:
+    import inspect
+
+    # If this script is imported, run the main function only if it is called from evaluate_model.py
+    stack = inspect.stack()
+    for frame in stack:
+        if "evaluate_model.py" in frame.filename:
+            main()
+            break
 

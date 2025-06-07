@@ -37,9 +37,9 @@ def load_datasets() -> tuple:
         logging.error("Indices of X_val and y_val do not match.")
         raise ValueError("Indices of X_val and y_val do not match.")
     # Ensure that the 'feature' column exists in X_train, X_val, and X_test
-    if 'feature' not in X_train.columns or 'feature' not in X_val.columns:
-        logging.error("The 'feature' column is missing in one of the datasets.")
-        raise ValueError("The 'feature' column is missing in one of the datasets.")
+    if 'image_path' not in X_train.columns or 'image_path' not in X_val.columns:
+        logging.error("The 'image_path' column is missing in one of the datasets.")
+        raise ValueError("The 'image_path' column is missing in one of the datasets.")
     # Ensure that the 'prdtypecode' column exists in y_train, y_val, and y_test
     if 'prdtypecode' not in y_train.columns or 'prdtypecode' not in y_val.columns:
         logging.error("The 'prdtypecode' column is missing in one of the label datasets.")
@@ -48,23 +48,21 @@ def load_datasets() -> tuple:
     if not pd.api.types.is_integer_dtype(y_train['prdtypecode']) or not pd.api.types.is_integer_dtype(y_val['prdtypecode']):
         logging.error("The 'prdtypecode' column must be of integer type.")
         raise ValueError("The 'prdtypecode' column must be of integer type.")
-    # Ensure that the 'feature' column is of string type
-    if not pd.api.types.is_string_dtype(X_train['feature']) or not pd.api.types.is_string_dtype(X_val['feature']):
-        logging.error("The 'feature' column must be of string type.")
-        raise ValueError("The 'feature' column must be of string type.")
+    # Ensure that the 'image_path' column is of string type
+    if not pd.api.types.is_string_dtype(X_train['image_path']) or not pd.api.types.is_string_dtype(X_val['feature']):
+        logging.error("The 'image_path' column must be of string type.")
+        raise ValueError("The 'image_path' column must be of string type.")
     # Ensure that the 'prdtypecode' column is not empty
     if y_train['prdtypecode'].isnull().any() or y_val['prdtypecode'].isnull().any():
         logging.error("The 'prdtypecode' column contains null values.")
         raise ValueError("The 'prdtypecode' column contains null values.")
     # Ensure that the 'feature' column is not empty
-    if X_train['feature'].isnull().any() or X_val['feature'].isnull().any():
-        logging.error("The 'feature' column contains null values.")
-        raise ValueError("The 'feature' column contains null values.")
+    if X_train['image_path'].isnull().any() or X_val['image_path'].isnull().any():
+        logging.error("The 'image_path' column contains null values.")
+        raise ValueError("The 'image_path' column contains null values.")
     return X_train, X_val, y_train, y_val
 
-
-
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO)
     logging.info("Building model based on efficientNetB1...")
 
@@ -149,3 +147,15 @@ if __name__ == "__main__":
     logging.info(f"Final validation accuracy: {final_val_accuracy}")
     logging.info(f"Final training F1 score: {final_f1}")
     logging.info(f"Final validation F1 score: {final_val_f1}")
+
+if __name__ == "__main__":
+    main()
+else:
+    import inspect
+
+    # If this script is imported, run the main function only if it is called from train_model.py
+    stack = inspect.stack()
+    for frame in stack:
+        if "train_model.py" in frame.filename:
+            main()
+            break

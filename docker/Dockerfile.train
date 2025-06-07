@@ -8,4 +8,4 @@ RUN pip install transformers tensorflow
 
 COPY . .
 
-CMD ["python", "src/models/train_model_text_mlflow.py"]
+CMD ["python -m", "src.models.train_model_text_mlflow"]

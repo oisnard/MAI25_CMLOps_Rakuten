@@ -100,4 +100,3 @@ target/
 /data/raw/
 
 ./.dvc/config.local
-/models

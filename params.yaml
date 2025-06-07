@@ -36,5 +36,5 @@ models_parameters :
 # Selection of model type for training and evaluation
 # model_type values can be "image" or "text" or "merged" (merged model not implemented yet)
 model_selection :
-  model_type : "image"
+  model_type : "text"
 

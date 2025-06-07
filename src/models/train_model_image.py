@@ -64,7 +64,7 @@ def load_datasets() -> tuple:
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    logging.info("Building model based on efficientNetB1...")
+    logging.info("Training model based on images...")
 
     # Load dataset parameters from YAML file
     params = tools.load_dataset_params_from_yaml()    
@@ -128,6 +128,8 @@ def main():
     history = model.fit(train_dataset, epochs=EPOCHS, validation_data=val_dataset)
     logging.info("Model training completed.")
     # Save the model
+    if os.path.exists(tools.MODEL_DIR) is False:
+        os.makedirs(tools.MODEL_DIR)
     model.save_weights(os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5"))
     logging.info("Model weightssaved successfully.")
     # Save the model architecture

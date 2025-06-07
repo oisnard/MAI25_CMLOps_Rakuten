@@ -1,0 +1,49 @@
+# Stages for the DVC pipeline
+stages:
+  import_data:
+    cmd: python -m src.data.import_raw_data
+    deps:
+      - src/data/import_raw_data.py
+      - params.yaml
+    outs:
+      - data/raw/
+  make_dataset:
+    cmd: python -m src.data.make_dataset
+    deps:
+      - src/data/make_dataset.py
+      - data/raw/
+      - params.yaml
+    outs:
+      - data/processed/
+    params:
+      - data_ratio
+      - data_split.validation_size
+      - data_split.test_size
+      - data_split.random_state
+      - data_split.shuffle
+  train_model:
+    cmd: python -m src.models.train_model_mlflow
+    deps:
+      - src/models/train_model_mlflow.py
+      - src/models/train_model_image_mlflow.py
+      - src/models/train_model_text_mlflow.py
+      - src/models/models.py
+      - src/models/metrics.py
+      - src/tools/tools.py  
+      - data/processed/
+      - params.yaml
+    outs:
+      - models/
+    params:
+      - training_parameters.epochs
+      - training_parameters.batch_size
+      - optimizer_parameters.learning_rate
+      - optimizer_parameters.weighting_decay
+      - optimizer_parameters.amsgrad
+      - models_parameters.EfficientNetB1.model_name
+      - models_parameters.EfficientNetB1.nb_trainable_layers
+      - models_parameters.Camembert.model_name
+      - models_parameters.Camembert.max_length
+      - model_selection.model_type
+    
+

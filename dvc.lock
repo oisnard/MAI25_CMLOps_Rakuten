@@ -1,0 +1,48 @@
+schema: '2.0'
+stages:
+  import_data:
+    cmd: python -m src.data.import_raw_data
+    deps:
+    - path: params.yaml
+      hash: md5
+      md5: 77aa10f58b282aa4196f1570ce916106
+      size: 1286
+    - path: src/data/import_raw_data.py
+      hash: md5
+      md5: ae8b74f627cc6d76d0d8940e43d8418f
+      size: 10289
+    outs:
+    - path: data/raw/
+      hash: md5
+      md5: 088449c5d4a8a10e89ac6ec42f2e878c.dir
+      size: 2687848905
+      nfiles: 98731
+  make_dataset:
+    cmd: python -m src.data.make_dataset
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 088449c5d4a8a10e89ac6ec42f2e878c.dir
+      size: 2687848905
+      nfiles: 98731
+    - path: params.yaml
+      hash: md5
+      md5: 77aa10f58b282aa4196f1570ce916106
+      size: 1286
+    - path: src/data/make_dataset.py
+      hash: md5
+      md5: f3cad2e229a528fe837c51f907046d45
+      size: 11930
+    params:
+      params.yaml:
+        data_ratio: 0.1
+        data_split.random_state: 42
+        data_split.shuffle: true
+        data_split.test_size: 0.15
+        data_split.validation_size: 0.15
+    outs:
+    - path: data/processed/
+      hash: md5
+      md5: d12fb6e8d1d11dec4b32bf8be8dc1f62.dir
+      size: 5586994
+      nfiles: 7

@@ -137,6 +137,8 @@ def main():
     
     logging.info("Training completed.")
     # Save the model
+    if os.path.exists(tools.MODEL_DIR) is False:
+        os.makedirs(tools.MODEL_DIR)
     model.save_weights(os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5"))
     logging.info("Model weights saved successfully.")
     # Save the model architecture

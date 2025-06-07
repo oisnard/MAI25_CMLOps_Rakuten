@@ -165,6 +165,8 @@ def main():
         logging.info("Model architecture saved successfully.")  
 
         # Save the model weights
+        if os.path.exists(tools.MODEL_DIR) is False:
+            os.makedirs(tools.MODEL_DIR)
         weights_path = os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5")
         logging.info(f"Saving model weights to {weights_path}")
         model.save_weights(weights_path)

@@ -120,6 +120,8 @@ def main():
         mlflow.log_metric("train_f1_score", final_f1)
         mlflow.log_metric("val_f1_score", final_val_f1)
 
+        if os.path.exists(tools.MODEL_DIR) is False:
+            os.makedirs(tools.MODEL_DIR)
         weights_path = os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5")
         archi_path = os.path.join(tools.MODEL_DIR, "camembert_model.json")
 
@@ -134,7 +136,7 @@ def main():
         mlflow.log_artifact(archi_path)
         mlflow.log_artifact("params.yaml")
         mlflow.log_artifact("src/models/models.py")
-)
+        logging.info("Artifacts logged to MLflow.")
 
 
 

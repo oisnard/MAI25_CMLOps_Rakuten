@@ -160,13 +160,14 @@ def main():
         model_json = model.to_json()
         archi_path = os.path.join(tools.MODEL_DIR, "efficientNetB1_model.json")
         logging.info(f"Saving model architecture to {archi_path}")
+        if os.path.exists(tools.MODEL_DIR) is False:
+            os.makedirs(tools.MODEL_DIR)
         with open(archi_path, "w") as json_file:
             json_file.write(model_json)
         logging.info("Model architecture saved successfully.")  
 
         # Save the model weights
-        if os.path.exists(tools.MODEL_DIR) is False:
-            os.makedirs(tools.MODEL_DIR)
+
         weights_path = os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5")
         logging.info(f"Saving model weights to {weights_path}")
         model.save_weights(weights_path)

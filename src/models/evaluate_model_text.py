@@ -62,11 +62,11 @@ if __name__ == "__main__":
         exit(1)
 
    # Load the MAX LEN and MODEL_NAME from params
-    MAX_LEN = params['models_parameters']['max_length']
+    MAX_LEN = params['models_parameters']['Camembert']['max_length']
     if not isinstance(MAX_LEN, int) or MAX_LEN <= 0:
         logging.error(f"Invalid max_len value: {MAX_LEN}. It should be a positive integer.")
         raise ValueError(f"Invalid max_len value: {MAX_LEN}. It should be a positive integer.")
-    MODEL_NAME = params['models_parameters']['model_name']
+    MODEL_NAME = params['models_parameters']['Camembert']['model_name']
     if not isinstance(MODEL_NAME, str) or not MODEL_NAME:   
         logging.error(f"Invalid MODEL_NAME value: {MODEL_NAME}. It should be a non-empty string.")
         raise ValueError(f"Invalid MODEL_NAME value: {MODEL_NAME}. It should be a non-empty string.")

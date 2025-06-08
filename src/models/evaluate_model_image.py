@@ -131,7 +131,8 @@ def main():
 
     report_df = pd.DataFrame(report_dict).transpose()
     # Save the classification report to a CSV file
-    report_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report_model_img.csv")
+    os.makedirs(tools.METRICS_DIR, exist_ok=True)  # Ensure the metrics directory exists
+    report_path = os.path.join(tools.METRICS_DIR, "classification_report_model_img.csv")
     report_df.to_csv(report_path)
     logging.info(f"Classification report saved to {report_path}")
     logging.info("Prediction process completed successfully.")
@@ -140,7 +141,7 @@ def main():
     # Save the classification report to a JSON file
     logging.info("Saving classification report to JSON file...")
     # Save the classification report as a JSON file
-    report_json_path = os.path.join(tools.DATA_PROCESSED_DIR, "classification_report_model_img.json")
+    report_json_path = os.path.join(tools.METRICS_DIR, "classification_report_model_img.json")
     with open(report_json_path, "w", encoding="utf-8") as f:
         json.dump(report_dict, f, ensure_ascii=True, indent=4)
     logging.info(f"Classification report saved to {report_json_path}")    

@@ -45,5 +45,18 @@ stages:
       - models_parameters.Camembert.model_name
       - models_parameters.Camembert.max_length
       - model_selection.model_type
-    
+  evaluate_model:
+    cmd: python -m src.models.evaluate_model
+    deps:
+      - src/models/evaluate_model.py
+      - src/models/models.py
+      - src/models/metrics.py
+      - src/tools/tools.py  
+      - models/
+      - data/processed/
+      - params.yaml
+    params:
+      - model_selection.model_type
+    metrics:
+      - metrics/
 

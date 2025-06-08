@@ -21,6 +21,7 @@ DATA_PROCESSED_DIR  = os.getenv("DATA_PROCESSED_DIR")
 
 MODEL_DIR = os.getenv("MODEL_DIR")
 LOGS_DIR = os.getenv("LOGS_DIR")
+METRICS_DIR = os.getenv("METRICS_DIR")  # Directory to save classification reports
 
 FILE_MAPPING_DICT = "mapping_dict.json"  # File to save the mapping dictionary
 

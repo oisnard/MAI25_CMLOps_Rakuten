@@ -59,4 +59,12 @@ stages:
       - model_selection.model_type
     metrics:
       - metrics/
+  launch_api:
+    cmd: uvicorn src.api.service:app --host 0.0.0.0 --port 8000 --reload
+    deps:
+      - src/api/service.py
+      - src/tools/tools.py  
+      - models/
+      - data/processed/
+      - params.yaml
 

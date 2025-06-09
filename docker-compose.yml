@@ -34,6 +34,20 @@ services:
       - MLFLOW_TRACKING_URI=http://0.0.0.0:5000
     command: ["mlflow", "ui", "--host", "0.0.0.0", "--port", "5000"]
 
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    depends_on:
+      - train
+    volumes:
+      - ./src:/app/src
+      - ./data/processed:/app/data/processed
+      - ./models:/app/models
+    ports:
+      - "8000:8000"
+    command: ["uvicorn", "src.api.service:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
 volumes:
   data:
   models:

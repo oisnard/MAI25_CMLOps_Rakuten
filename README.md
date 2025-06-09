@@ -16,6 +16,19 @@ python -m src.data.make_dataset
 python -m pytest
 ```
 
+# To launcher docker api specifically (it avoids the training phase of docker-compose pipeline)
+docker build -f docker/Dockerfile.api -t predict_api .
+docker run -p 8000:8000 -v ${PWD}/models:/app/models \
+    -v ${PWD}/data/processed:/app/data/processed \
+    predict_api:latest
+
+# To launch the docker compose pipeline
+docker compose up --build
+
+
+# To launche the dvc pipeline
+dvc repro
+
 # Structure of repository
 This project is a MLOps projects based on the ENS Data challenge Rakuten. The problem raised by the challenge is a multi modal classification based on texts and images.
 

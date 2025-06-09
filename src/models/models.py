@@ -77,6 +77,13 @@ def build_cam_model(MODEL_NAME="almanach/camembert-base", MAX_LEN=32, NUM_CLASSE
 
 # Define a function to load and preprocess an image based on its file path
 def load_and_preprocess_image_from_path(filepath):
+    """
+    Load and preprocess an image from a file path.
+    Args:
+        filepath (tf.Tensor): A tensor containing the file path of the image.
+    Returns:
+        tf.Tensor: A preprocessed image tensor.
+    """
     image = tf.io.read_file(filepath)
     image = tf.image.decode_jpeg(image, channels=3)
     image = tf.image.resize(image, [IMG_SIZE, IMG_SIZE])
@@ -85,7 +92,15 @@ def load_and_preprocess_image_from_path(filepath):
 
 # Build an model based on EfficientNetB1
 def build_model_image_efficientNetB1(num_classes: int, nb_trainable_layers: int) -> tf.keras.Model:
-    #
+    """
+    Build a model based on EfficientNetB1 for image classification.
+    Args:
+        num_classes (int): The number of classes for classification.
+        nb_trainable_layers (int): The number of trainable layers in the base model.
+    Returns:
+        tf.keras.Model: The constructed EfficientNetB1 model.
+    """
+    # Define the input layer for image paths
     inputs = tf.keras.layers.Input(shape=(), dtype=tf.string)
  
     # Use tf.map_fn to apply the image loading and preprocessing function to each path in the batch

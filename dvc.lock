@@ -64,8 +64,8 @@ stages:
       size: 2986
     - path: src/models/models.py
       hash: md5
-      md5: 0ce3edc42b0e2ee4eb34c57e432491a0
-      size: 4822
+      md5: d7c8c5a4cd921d9f3c7973a62db38b13
+      size: 5400
     - path: src/models/train_model_image_mlflow.py
       hash: md5
       md5: 155b56743c2c3e98b226c629840252dc
@@ -97,7 +97,7 @@ stages:
     outs:
     - path: models/
       hash: md5
-      md5: 6a214e43b2aeb70615f67f5fafc1559d.dir
+      md5: 0fa559e324dd01882c14e1144d15d5c3.dir
       size: 1436881529
       nfiles: 2
   evaluate_model:
@@ -105,12 +105,12 @@ stages:
     deps:
     - path: data/processed/
       hash: md5
-      md5: 38c4f4e22a33fb1515a6bf3333a07028.dir
-      size: 5599437
+      md5: 3cdeeae25b80d6d010536aa760305346.dir
+      size: 5599391
       nfiles: 8
     - path: models/
       hash: md5
-      md5: 6a214e43b2aeb70615f67f5fafc1559d.dir
+      md5: 0fa559e324dd01882c14e1144d15d5c3.dir
       size: 1436881529
       nfiles: 2
     - path: params.yaml
@@ -127,8 +127,8 @@ stages:
       size: 2986
     - path: src/models/models.py
       hash: md5
-      md5: 0ce3edc42b0e2ee4eb34c57e432491a0
-      size: 4822
+      md5: d7c8c5a4cd921d9f3c7973a62db38b13
+      size: 5400
     - path: src/tools/tools.py
       hash: md5
       md5: 1c195ac7e97f2fa60fe609e90a439d06
@@ -139,20 +139,20 @@ stages:
     outs:
     - path: metrics/
       hash: md5
-      md5: d05a45c39ace7d8b1ce66a03ed8b73ab.dir
-      size: 6355
+      md5: b669e136dce671cbda268fd1a1893e2a.dir
+      size: 6377
       nfiles: 2
   launch_api:
     cmd: uvicorn src.api.service:app --host 0.0.0.0 --port 8000 --reload
     deps:
     - path: data/processed/
       hash: md5
-      md5: 38c4f4e22a33fb1515a6bf3333a07028.dir
-      size: 5599437
+      md5: 3cdeeae25b80d6d010536aa760305346.dir
+      size: 5599391
       nfiles: 8
     - path: models/
       hash: md5
-      md5: 6a214e43b2aeb70615f67f5fafc1559d.dir
+      md5: 0fa559e324dd01882c14e1144d15d5c3.dir
       size: 1436881529
       nfiles: 2
     - path: params.yaml
@@ -161,8 +161,8 @@ stages:
       size: 1286
     - path: src/api/service.py
       hash: md5
-      md5: 85ffe7113a38529d38c85cb15f181e15
-      size: 3415
+      md5: 35bcca942ec433a34c392e71d8983fbc
+      size: 3433
     - path: src/tools/tools.py
       hash: md5
       md5: 1c195ac7e97f2fa60fe609e90a439d06

@@ -20,7 +20,7 @@ class ListProductDefinition(BaseModel):
     descriptions: List[str]
 
 @app.post("/predict_text", summary="Predict a product prdtypecode from its designation and description")
-def predict_text_endpoint(request: ProductDefinition):
+async def predict_text_endpoint(request: ProductDefinition):
     """
     Predict product type category (prdtypecode) for a given product designation and description.
     
@@ -43,7 +43,7 @@ def predict_text_endpoint(request: ProductDefinition):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/predict_text_batch", summary="Predict a product prdtypecode from a batch of designations and descriptions")
-def predict_text_batch_endpoint(request: ListProductDefinition):
+async def predict_text_batch_endpoint(request: ListProductDefinition):
     """
     Predict product type categories (prdtypecode) for a batch of products.
     Args:
@@ -65,7 +65,7 @@ def predict_text_batch_endpoint(request: ListProductDefinition):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/predict_text_list", summary="Predict product categories from a list of texts")
-def predict_text_list(request: TextRequest):
+async def predict_text_list(request: TextRequest):
     """
     Predict product categories for a list of texts relating to a list of products.
     Args:

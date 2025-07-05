@@ -1,12 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-from src.predict_text import predict_text 
+from src.models.predict_text import predict_text 
 from src.data.make_dataset import remove_all_html_tags
+from src.api.middleware import JWTAuthMiddleware
 
 app = FastAPI(title="Rakuten Product Prediction API",
               description="API for predicting product categories",
               version="1.0.0")
+
+app.add_middleware(JWTAuthMiddleware)
 
 class TextRequest(BaseModel):
     text: List[str]

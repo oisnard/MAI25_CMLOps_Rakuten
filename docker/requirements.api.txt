@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-jose
+python-dotenv
+pydantic
+PyJWT==2.8.0
+tensorflow==2.13.0
+transformers==4.31.0
+sentencepiece==0.1.99
+scikit-learn

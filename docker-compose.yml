@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.preprocessing
+    env_file:
+      - .env
     volumes:
       - ./data:/app/data
     command: ["python", "-m", "src.data.make_dataset"]
@@ -15,7 +17,8 @@ services:
       context: .
       dockerfile: docker/Dockerfile.train
     depends_on:
-      - preprocessing
+      preprocessing:
+        condition: service_completed_successfully
     volumes:
       - ./data:/app/data
       - ./models:/app/models

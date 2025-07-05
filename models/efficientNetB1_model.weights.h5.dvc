@@ -1,0 +1,5 @@
+outs:
+- md5: 346c3aebe990f448205c5bfce173ffd2
+  size: 46543712
+  hash: md5
+  path: efficientNetB1_model.weights.h5

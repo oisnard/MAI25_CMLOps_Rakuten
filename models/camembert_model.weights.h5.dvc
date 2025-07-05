@@ -1,0 +1,5 @@
+outs:
+- md5: 6c834e665e468cf847751e8cdc1b7e09
+  size: 1436876872
+  hash: md5
+  path: camembert_model.weights.h5

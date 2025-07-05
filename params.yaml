@@ -31,7 +31,7 @@ models_parameters :
     max_length : 16
   EfficientNetB1 : 
     model_name : "EfficientNetB1"
-    nb_trainable_layers : 0
+    nb_trainable_layers : 5
 
 # Selection of model type for training and evaluation
 # model_type values can be "image" or "text" or "merged" (merged model not implemented yet)

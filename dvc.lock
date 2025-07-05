@@ -5,8 +5,8 @@ stages:
     deps:
     - path: params.yaml
       hash: md5
-      md5: 77aa10f58b282aa4196f1570ce916106
-      size: 1286
+      md5: a2f00eb9fb77b875a260bd14ad1efe98
+      size: 1287
     - path: src/data/import_raw_data.py
       hash: md5
       md5: ae8b74f627cc6d76d0d8940e43d8418f
@@ -27,8 +27,8 @@ stages:
       nfiles: 98731
     - path: params.yaml
       hash: md5
-      md5: 77aa10f58b282aa4196f1570ce916106
-      size: 1286
+      md5: a2f00eb9fb77b875a260bd14ad1efe98
+      size: 1287
     - path: src/data/make_dataset.py
       hash: md5
       md5: f3cad2e229a528fe837c51f907046d45
@@ -56,8 +56,8 @@ stages:
       nfiles: 7
     - path: params.yaml
       hash: md5
-      md5: 77aa10f58b282aa4196f1570ce916106
-      size: 1286
+      md5: a2f00eb9fb77b875a260bd14ad1efe98
+      size: 1287
     - path: src/models/metrics.py
       hash: md5
       md5: e35fa89d2c4dcbd2af7205455eeea8d0
@@ -84,11 +84,11 @@ stages:
       size: 7066
     params:
       params.yaml:
-        model_selection.model_type: text
+        model_selection.model_type: image
         models_parameters.Camembert.max_length: 16
         models_parameters.Camembert.model_name: almanach/camembert-base
         models_parameters.EfficientNetB1.model_name: EfficientNetB1
-        models_parameters.EfficientNetB1.nb_trainable_layers: 0
+        models_parameters.EfficientNetB1.nb_trainable_layers: 5
         optimizer_parameters.amsgrad: true
         optimizer_parameters.learning_rate: 2e-05
         optimizer_parameters.weighting_decay: 1e-08
@@ -97,26 +97,26 @@ stages:
     outs:
     - path: models/
       hash: md5
-      md5: 0fa559e324dd01882c14e1144d15d5c3.dir
-      size: 1436881529
-      nfiles: 2
+      md5: c21286f6bf719f14fd8d3268c5ef8210.dir
+      size: 46858882
+      nfiles: 3
   evaluate_model:
     cmd: python -m src.models.evaluate_model
     deps:
     - path: data/processed/
       hash: md5
-      md5: 3cdeeae25b80d6d010536aa760305346.dir
-      size: 5599391
-      nfiles: 8
+      md5: d12fb6e8d1d11dec4b32bf8be8dc1f62.dir
+      size: 5586994
+      nfiles: 7
     - path: models/
       hash: md5
-      md5: 0fa559e324dd01882c14e1144d15d5c3.dir
-      size: 1436881529
-      nfiles: 2
+      md5: c21286f6bf719f14fd8d3268c5ef8210.dir
+      size: 46858882
+      nfiles: 3
     - path: params.yaml
       hash: md5
-      md5: 77aa10f58b282aa4196f1570ce916106
-      size: 1286
+      md5: a2f00eb9fb77b875a260bd14ad1efe98
+      size: 1287
     - path: src/models/evaluate_model.py
       hash: md5
       md5: d4919bdcf2ec63fecf72e2235a4053c5
@@ -135,30 +135,30 @@ stages:
       size: 7066
     params:
       params.yaml:
-        model_selection.model_type: text
+        model_selection.model_type: image
     outs:
     - path: metrics/
       hash: md5
-      md5: b669e136dce671cbda268fd1a1893e2a.dir
-      size: 6377
+      md5: 812b0d6167bc35c753541ea43bc94202.dir
+      size: 5776
       nfiles: 2
   launch_api:
     cmd: uvicorn src.api.service:app --host 0.0.0.0 --port 8000 --reload
     deps:
     - path: data/processed/
       hash: md5
-      md5: 3cdeeae25b80d6d010536aa760305346.dir
-      size: 5599391
-      nfiles: 8
+      md5: d12fb6e8d1d11dec4b32bf8be8dc1f62.dir
+      size: 5586994
+      nfiles: 7
     - path: models/
       hash: md5
-      md5: 0fa559e324dd01882c14e1144d15d5c3.dir
-      size: 1436881529
-      nfiles: 2
+      md5: c21286f6bf719f14fd8d3268c5ef8210.dir
+      size: 46858882
+      nfiles: 3
     - path: params.yaml
       hash: md5
-      md5: 77aa10f58b282aa4196f1570ce916106
-      size: 1286
+      md5: a2f00eb9fb77b875a260bd14ad1efe98
+      size: 1287
     - path: src/api/service.py
       hash: md5
       md5: 35bcca942ec433a34c392e71d8983fbc

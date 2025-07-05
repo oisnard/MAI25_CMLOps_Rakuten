@@ -101,4 +101,5 @@ target/
 
 ./.dvc/config.local
 /models
+!models/*.dvc
 /metrics

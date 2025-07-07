@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/2a627366e62f4edebbce5401b26124b3/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 2a627366e62f4edebbce5401b26124b3
+run_name: bustling-swan-635
+run_uuid: 2a627366e62f4edebbce5401b26124b3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751723895803
+status: 1
+tags: []
+user_id: root

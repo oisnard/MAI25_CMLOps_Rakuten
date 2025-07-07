@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/644121357117108832/5c8dc844d44a4d93a8a356e400d8e9f0/artifacts
+end_time: 1749289474541
+entry_point_name: ''
+experiment_id: '644121357117108832'
+lifecycle_stage: active
+run_id: 5c8dc844d44a4d93a8a356e400d8e9f0
+run_name: peaceful-frog-380
+run_uuid: 5c8dc844d44a4d93a8a356e400d8e9f0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749289474536
+status: 4
+tags: []
+user_id: dransi

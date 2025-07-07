@@ -1,0 +1,40 @@
+# Ratio of data to be used for training and testing (in order to avoid long model training on AWS GPU)
+data_ratio : 0.1
+
+# Definition of the data split parameters
+data_split : 
+  validation_size : 0.15
+  test_size : 0.15
+  random_state : 42
+  shuffle : true
+
+# Definition of the training parameters
+training_parameters :
+  epochs : 1
+  batch_size : 16
+
+# Definition of the optimizer parameters
+# These parameters are used to configure the optimizer for training the model
+# The learning rate, weight decay, and amsgrad are common parameters for optimizers like AdamW
+optimizer_parameters :
+  learning_rate : 2e-5
+  weighting_decay : 1e-8
+  amsgrad : true
+
+# Definition of the models parameters
+# These parameters are used to configure the models for training and evaluation
+# The model name and maximum length are specific to the Camembert model
+# The number of trainable layers is specific to the EfficientNetB1 model
+models_parameters :
+  Camembert :
+    model_name : "almanach/camembert-base"
+    max_length : 16
+  EfficientNetB1 : 
+    model_name : "EfficientNetB1"
+    nb_trainable_layers : 5
+
+# Selection of model type for training and evaluation
+# model_type values can be "image" or "text" or "merged" (merged model not implemented yet)
+model_selection :
+  model_type : "image"
+

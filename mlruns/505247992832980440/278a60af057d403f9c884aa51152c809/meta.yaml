@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/278a60af057d403f9c884aa51152c809/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 278a60af057d403f9c884aa51152c809
+run_name: brawny-cat-140
+run_uuid: 278a60af057d403f9c884aa51152c809
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751899088627
+status: 1
+tags: []
+user_id: root

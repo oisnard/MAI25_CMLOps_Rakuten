@@ -66,6 +66,7 @@ X_TRAIN_RAW_FILENAME = "X_train_update.csv"
 X_TEST_RAW_FILENAME = "X_test_update.csv"
 Y_TRAIN_RAW_FILENAME = "Y_train_CVw08PX.csv"
 
+LAST_START_LINE_FILENAME = os.path.join(DATA_PROCESSED_DIR, "last_start_line.txt")
 
 def load_xtrain_raw_data():
     """

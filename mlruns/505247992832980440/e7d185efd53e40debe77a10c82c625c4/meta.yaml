@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/e7d185efd53e40debe77a10c82c625c4/artifacts
+end_time: 1749313399394
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: e7d185efd53e40debe77a10c82c625c4
+run_name: capable-sheep-985
+run_uuid: e7d185efd53e40debe77a10c82c625c4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749312609275
+status: 3
+tags: []
+user_id: dransi

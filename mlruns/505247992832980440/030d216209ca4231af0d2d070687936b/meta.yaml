@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/030d216209ca4231af0d2d070687936b/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 030d216209ca4231af0d2d070687936b
+run_name: auspicious-mare-47
+run_uuid: 030d216209ca4231af0d2d070687936b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751284871063
+status: 1
+tags: []
+user_id: root

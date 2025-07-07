@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/bd529155572640699598e213cf7dca0c/artifacts
+end_time: 1751734485051
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: bd529155572640699598e213cf7dca0c
+run_name: charming-fish-974
+run_uuid: bd529155572640699598e213cf7dca0c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751733543576
+status: 3
+tags: []
+user_id: root

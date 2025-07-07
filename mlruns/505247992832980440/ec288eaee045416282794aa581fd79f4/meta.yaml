@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/ec288eaee045416282794aa581fd79f4/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: ec288eaee045416282794aa581fd79f4
+run_name: adorable-duck-531
+run_uuid: ec288eaee045416282794aa581fd79f4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751892685721
+status: 1
+tags: []
+user_id: root

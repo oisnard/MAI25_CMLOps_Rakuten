@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/2cbebb5a65f541e08f92733c6bad3197/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 2cbebb5a65f541e08f92733c6bad3197
+run_name: angry-auk-1000
+run_uuid: 2cbebb5a65f541e08f92733c6bad3197
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751889093667
+status: 1
+tags: []
+user_id: root

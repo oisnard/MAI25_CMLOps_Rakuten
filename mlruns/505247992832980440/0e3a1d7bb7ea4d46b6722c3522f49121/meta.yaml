@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/0e3a1d7bb7ea4d46b6722c3522f49121/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 0e3a1d7bb7ea4d46b6722c3522f49121
+run_name: resilient-shrew-763
+run_uuid: 0e3a1d7bb7ea4d46b6722c3522f49121
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751904392407
+status: 1
+tags: []
+user_id: root

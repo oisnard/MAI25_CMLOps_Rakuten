@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/af826eb899f54fa3a623d6b5c7e10b44/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: af826eb899f54fa3a623d6b5c7e10b44
+run_name: whimsical-stoat-700
+run_uuid: af826eb899f54fa3a623d6b5c7e10b44
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751728751280
+status: 1
+tags: []
+user_id: root

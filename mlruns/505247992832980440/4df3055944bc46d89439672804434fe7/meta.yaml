@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/4df3055944bc46d89439672804434fe7/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 4df3055944bc46d89439672804434fe7
+run_name: orderly-rat-150
+run_uuid: 4df3055944bc46d89439672804434fe7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751724113968
+status: 1
+tags: []
+user_id: root

@@ -133,6 +133,12 @@ def main():
         model = models.build_model_image_efficientNetB1(num_classes=num_classes, nb_trainable_layers=nb_trainable_layers)
         logging.info("Model built successfully.")
 
+        weights_file = os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5")
+        if os.path.exists(tools.MODEL_DIR):
+            model.load_weights(os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5"))
+            logging.info("Model weights loaded successfully.")
+
+
         # Compile the model
         logging.info("Compiling the model...")
         logging.info("Compiling the model...")

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/706abd94d4cb4d82a1135161fb242365/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 706abd94d4cb4d82a1135161fb242365
+run_name: upset-midge-678
+run_uuid: 706abd94d4cb4d82a1135161fb242365
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749477177169
+status: 1
+tags: []
+user_id: root

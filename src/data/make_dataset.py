@@ -129,6 +129,34 @@ def process_target_raw_data(df: pd.DataFrame, mapping_dict: dict) -> pd.DataFram
 
     return df   
 
+# Function to get the starting line number for processing the dataset
+def get_start_line() -> int:
+    """
+    Get the starting line number for processing the dataset. 
+    It allows to simulate new data coming from the fields
+    The last starting line number can be stored in a file data/processed/last_start_line.txt
+    
+    Returns:
+        int: The starting line number for processing the dataset.
+    """
+    last_start_line_file = tools.LAST_START_LINE_FILENAME
+    if os.path.exists(last_start_line_file):
+        with open(last_start_line_file, 'r') as f:
+            last_start_line = f.read().strip()
+            return int(last_start_line) if last_start_line.isdigit() else 0
+    return 0  # Default to start from the beginning
+
+def save_start_line(line_number: int):
+    """
+    Save the current line number to the next start line file.
+    
+    Args:
+        line_number (int): The current line number to save.
+    """
+    last_start_line_file = tools.LAST_START_LINE_FILENAME
+    with open(last_start_line_file, 'w') as f:
+        f.write(str(line_number))
+    logging.info(f"Last start line saved: {line_number}")
 
 
 # A retravailler pour prendre au fur et à mesure les données selon le ratio
@@ -152,9 +180,22 @@ def get_dataset_from_ratio(X_train: pd.DataFrame,
     if ratio == 1.0:
         return X_train, y_train
 
-    train_size = int(len(X_train) * ratio)
-    
-    return X_train.iloc[:train_size], y_train.iloc[:train_size]
+    start_line = get_start_line()
+    if start_line >= X_train.shape[0]:
+        start_line = 0  # Reset to 0 if the start line is greater than the number of rows in the DataFrame
+    logging.info(f"Starting line for processing: {start_line}")
+    next_line = start_line + int(X_train.shape[0] * ratio)  # Start from the next line after the last processed line
+    if next_line > X_train.shape[0]:
+        next_line = X_train.shape[0]  # Ensure we don't exceed the DataFrame length
+    logging.info(f"Next line to process: {next_line}")
+
+    # Save the current line number for the next run
+    save_start_line(next_line)
+    # Return the subset of the dataset based on the ratio
+    if start_line >= X_train.shape[0]:
+        logging.warning("Start line is greater than or equal to the number of rows in the DataFrame. Returning empty DataFrame.")
+        return pd.DataFrame(), pd.DataFrame()
+    return X_train.iloc[start_line:next_line], y_train.iloc[start_line:next_line]
 
 
 def get_dataset_from_split(X_train: pd.DataFrame,
@@ -231,6 +272,9 @@ if __name__ == "__main__":
     # Get the subset of the dataset based on the ratio
     x_train_df, y_train_df = get_dataset_from_ratio(x_train_df, y_train_df, ratio)
 
+    if x_train_df.empty or y_train_df.empty:
+        logging.error("X_train or Y_train is empty after applying the ratio. All data have been processed")
+        exit(1)
 
     # Process the X_train raw data file
     logging.info("Starting to process the X_train raw data file...")

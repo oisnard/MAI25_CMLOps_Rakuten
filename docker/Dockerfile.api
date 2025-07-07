@@ -2,10 +2,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install tensorflow tf-keras
-RUN pip install --no-cache-dir sentencepiece transformers 
+COPY docker/requirements.api.txt .
+RUN apt-get update && apt-get install -y git
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.api.txt
+#RUN pip install transformers tensorflow
+#RUN pip install --no-cache-dir sentencepiece transformers 
 
 ENV TRANSFORMERS_CACHE=/app/.cache/huggingface
 RUN mkdir -p $TRANSFORMERS_CACHE
@@ -14,13 +16,10 @@ RUN mkdir -p $TRANSFORMERS_CACHE
 RUN python -c "from transformers import CamembertTokenizer, TFCamembertModel; \
                CamembertTokenizer.from_pretrained('almanach/camembert-base'); \
                TFCamembertModel.from_pretrained('almanach/camembert-base')"
-
 COPY .env /app/.env
-COPY params.yaml /app/params.yaml
-COPY src/tools/tools.py /app/src/tools/tools.py
-COPY src/data/make_dataset.py /app/src/data/make_dataset.py
-COPY src/predict_text.py /app/src/predict_text.py
-COPY src/models/models.py /app/src/models/models.py
-COPY src/api/service.py /app/src/api/service.py
+COPY src/ /app/src/
+COPY params.yaml ./params.yaml
+COPY setup.py .
+EXPOSE 8000
 
 CMD ["uvicorn", "src.api.service:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/def8c6d1ce1c441582fa5d59b1901d56/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: def8c6d1ce1c441582fa5d59b1901d56
+run_name: traveling-ape-260
+run_uuid: def8c6d1ce1c441582fa5d59b1901d56
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751891069896
+status: 1
+tags: []
+user_id: root

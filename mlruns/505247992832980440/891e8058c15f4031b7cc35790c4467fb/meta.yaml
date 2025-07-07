@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/891e8058c15f4031b7cc35790c4467fb/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 891e8058c15f4031b7cc35790c4467fb
+run_name: big-toad-73
+run_uuid: 891e8058c15f4031b7cc35790c4467fb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751892922363
+status: 1
+tags: []
+user_id: root

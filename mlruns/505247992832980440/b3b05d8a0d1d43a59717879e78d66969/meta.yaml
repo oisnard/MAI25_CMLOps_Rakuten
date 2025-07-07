@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/b3b05d8a0d1d43a59717879e78d66969/artifacts
+end_time: 1749311202264
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: b3b05d8a0d1d43a59717879e78d66969
+run_name: painted-roo-947
+run_uuid: b3b05d8a0d1d43a59717879e78d66969
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749311173582
+status: 4
+tags: []
+user_id: dransi

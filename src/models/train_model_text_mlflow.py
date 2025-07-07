@@ -95,6 +95,10 @@ def main():
         val_dataset = val_dataset.map(encode).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
         model = models.build_cam_model(MODEL_NAME=MODEL_NAME, MAX_LEN=MAX_LEN, NUM_CLASSES=tools.NUM_CLASSES)
+        weights_file = os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5")
+        if  os.path.exists(weights_file):
+            model.load_weights(os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5"))
+            logging.info("Model weights loaded successfully.")
         model.compile(
             optimizer=tf.keras.optimizers.Adam(5e-5),
             loss=tf.keras.losses.SparseCategoricalCrossentropy(),

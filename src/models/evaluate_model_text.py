@@ -104,9 +104,13 @@ def main():
         logging.error(f"Model directory does not exist: {tools.MODEL_DIR}")
         raise FileNotFoundError(f"Model directory does not exist: {tools.MODEL_DIR}")
 
-    model.load_weights(os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5"))
-    logging.info("Model weights loaded successfully.")
-
+    weights_file = os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5")
+    if  os.path.exists(weights_file):
+        model.load_weights(os.path.join(tools.MODEL_DIR, "camembert_model.weights.h5"))
+        logging.info("Model weights loaded successfully.")
+    else:
+        logging.error(f"Model weights file not found: {weights_file}")
+        raise FileNotFoundError(f"Model weights file not found: {weights_file}")
     # Make predictions
     logging.info("Making predictions on the test dataset...")
     predictions = model.predict(test_dataset)

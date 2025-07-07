@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/7a4cad29803141bf882e2e7ff0c97fb5/artifacts
+end_time: 1750405167499
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 7a4cad29803141bf882e2e7ff0c97fb5
+run_name: upset-mule-179
+run_uuid: 7a4cad29803141bf882e2e7ff0c97fb5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1750404346657
+status: 3
+tags: []
+user_id: root

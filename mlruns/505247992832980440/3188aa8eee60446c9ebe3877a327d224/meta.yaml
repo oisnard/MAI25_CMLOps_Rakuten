@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/3188aa8eee60446c9ebe3877a327d224/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 3188aa8eee60446c9ebe3877a327d224
+run_name: calm-colt-298
+run_uuid: 3188aa8eee60446c9ebe3877a327d224
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751899909850
+status: 1
+tags: []
+user_id: root

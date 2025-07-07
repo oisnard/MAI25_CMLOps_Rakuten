@@ -1,14 +1,18 @@
 FROM python:3.12-slim
 
 WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install tensorflow tf-keras
-RUN pip install --no-cache-dir sentencepiece transformers 
-
+ENV PYTHONPATH=/app
 ENV TRANSFORMERS_CACHE=/app/.cache/huggingface
+ENV HF_HOME=/app/.cache/huggingface
 RUN mkdir -p $TRANSFORMERS_CACHE
+
+COPY docker/requirements.train.txt .
+RUN apt-get update && apt-get install -y git
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.train.txt
+#RUN pip install transformers tensorflow
+#RUN pip install --no-cache-dir sentencepiece transformers 
+
 
 # Pre-download the model to ensure it works in the container
 RUN python -c "from transformers import CamembertTokenizer, TFCamembertModel; \
@@ -16,12 +20,9 @@ RUN python -c "from transformers import CamembertTokenizer, TFCamembertModel; \
                TFCamembertModel.from_pretrained('almanach/camembert-base')"
 
 COPY .env /app/.env
-COPY params.yaml /app/params.yaml
-COPY src/tools/tools.py /app/src/tools/tools.py
-COPY src/models/train_model_mlflow.py /app/src/models/train_model_mlflow.py
-COPY src/models/train_model_text_mlflow.py /app/src/models/train_model_text_mlflow.py
-COPY src/models/train_model_image_mlflow.py /app/src/models/train_model_image_mlflow.py
-COPY src/models/models.py /app/src/models/models.py
-COPY src/models/metrics.py /app/src/models/metrics.py
 
-CMD ["python", "-m", "src.models.train_model_mlflow"]
+COPY params.yaml ./params.yaml
+COPY src/ /app/src/
+COPY setup.py .
+
+#CMD ["python", "-m", "src.models.train_model_mlflow"]

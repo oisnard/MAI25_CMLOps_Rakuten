@@ -2,11 +2,16 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY docker/requirements.mlflow.txt .
+RUN pip install --no-cache-dir -r requirements.mlflow.txt
 RUN pip install mlflow
 
 #COPY . .
+COPY src/ /app/src/ 
+COPY docker-compose.yml .
+COPY params.yaml .
+COPY setup.py .
+COPY .env /app/.env
 
 EXPOSE 5000
 

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/80d806cd67b54b7285bc8534c906b104/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 80d806cd67b54b7285bc8534c906b104
+run_name: ambitious-snail-526
+run_uuid: 80d806cd67b54b7285bc8534c906b104
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751892138961
+status: 1
+tags: []
+user_id: root

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/17cb3baf094149c29dc098f0b3aea865/artifacts
+end_time: 1751825293267
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 17cb3baf094149c29dc098f0b3aea865
+run_name: rebellious-newt-288
+run_uuid: 17cb3baf094149c29dc098f0b3aea865
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751824521850
+status: 3
+tags: []
+user_id: root

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/feff3ef8b2d04314bd5395635deb9ad1/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: feff3ef8b2d04314bd5395635deb9ad1
+run_name: unique-horse-55
+run_uuid: feff3ef8b2d04314bd5395635deb9ad1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751731100510
+status: 1
+tags: []
+user_id: root

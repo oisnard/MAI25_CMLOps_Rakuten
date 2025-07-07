@@ -103,3 +103,8 @@ target/
 /models
 !models/*.dvc
 /metrics
+
+/airflow/logs/
+/airflow/plugins/
+/airflow/dags/__pycache__/
+/airflow/dags/.airflowignore

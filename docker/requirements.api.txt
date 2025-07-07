@@ -1,10 +1,14 @@
+pandas
+numpy
+beautifulsoup4
 fastapi
 uvicorn
 python-jose
 python-dotenv
 pydantic
 PyJWT==2.8.0
-tensorflow==2.13.0
-transformers==4.31.0
-sentencepiece==0.1.99
+tensorflow==2.19.0
+tf-keras
+transformers==4.52.0
 scikit-learn
+sentencepiece==0.2.0

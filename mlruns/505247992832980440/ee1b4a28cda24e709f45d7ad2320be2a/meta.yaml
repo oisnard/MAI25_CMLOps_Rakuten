@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/ee1b4a28cda24e709f45d7ad2320be2a/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: ee1b4a28cda24e709f45d7ad2320be2a
+run_name: clean-skunk-912
+run_uuid: ee1b4a28cda24e709f45d7ad2320be2a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751890152362
+status: 1
+tags: []
+user_id: root

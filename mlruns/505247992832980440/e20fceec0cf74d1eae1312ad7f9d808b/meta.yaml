@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/e20fceec0cf74d1eae1312ad7f9d808b/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: e20fceec0cf74d1eae1312ad7f9d808b
+run_name: gentle-tern-279
+run_uuid: e20fceec0cf74d1eae1312ad7f9d808b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751732490360
+status: 1
+tags: []
+user_id: root

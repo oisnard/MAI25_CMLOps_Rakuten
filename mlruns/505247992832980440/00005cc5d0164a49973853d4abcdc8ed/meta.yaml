@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/00005cc5d0164a49973853d4abcdc8ed/artifacts
+end_time: 1749312016290
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 00005cc5d0164a49973853d4abcdc8ed
+run_name: capable-moose-789
+run_uuid: 00005cc5d0164a49973853d4abcdc8ed
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749311235468
+status: 4
+tags: []
+user_id: dransi

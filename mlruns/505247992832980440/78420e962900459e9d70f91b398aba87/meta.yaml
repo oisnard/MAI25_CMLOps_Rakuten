@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/78420e962900459e9d70f91b398aba87/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 78420e962900459e9d70f91b398aba87
+run_name: wistful-loon-874
+run_uuid: 78420e962900459e9d70f91b398aba87
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751728799770
+status: 1
+tags: []
+user_id: root

@@ -96,6 +96,7 @@ services:
   airflow-init:
     image: apache/airflow:2.9.1
     container_name: airflow-init
+    env_file: .env
     entrypoint: >
       bash -c "
         airflow db init &&

@@ -1,127 +1,225 @@
 MAI25_CMLOPS : project Rakuten 
 ==============================
 
-# To load raw data set
-```bash
-python -m src.data.import_raw_data
-```
+Projet pédagogique réalisé dans le cadre de la formation MLOps de DataScientest (Cohorte MAI 2025), axé sur la mise en place d’une architecture MLOps complète pour le traitement et la classification de données produits Rakuten dans le cadre du challenge ens-data : https://challengedata.ens.fr/participants/challenges/35/ .
+Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier ISNARD / Julien TREVISAN / Loïc RAMAYE lors de leur formation Data Scientist (cohorte Juin 2025) et qui avaient permis d'obtenir la première place au classement public et privé du challenge.
 
-# To make dataset for training
-```bash
-python -m src.data.make_dataset
-```
 
-# To launch unit tests
+---
+## 🚀 Objectifs réalisés 
+
+- Mettre en place un pipeline complet de Machine Learning avec Airflow.
+- Intégrer des étapes de data loading, preprocessing, entraînement, évaluation et déploiement.
+- Suivre les expériences via MLflow.
+- Conteneuriser l’environnement avec Docker.
+- Fournir une API de prédiction REST sécurisée.
+- Suivre les versions de données avec DVC
+- Tests unitaires
+
+---
+## 📁 Structure du dépôt
+
 ```bash
+.
+├── airflow/                   # Composants liés à Airflow
+│   ├── dags/                 # DAG principal orchestrant le pipeline
+│   │   └── rakuten_dags.py
+│
+├── data/                     # Données versionnées avec DVC
+│   ├── raw/                 # Données brutes (ex : images, CSV initiaux)
+│   ├── processed/           # Données traitées (X_train, y_train, etc.)
+│   ├── processed.dvc        # Fichier DVC de suivi de `/processed`
+│   ├── raw.dvc              # Fichier DVC de suivi de `/raw`
+│   └── .gitignore           # Évite de traquer les gros fichiers localement
+│
+├── docker/                   # Dockerfiles spécifiques à chaque étape
+│   ├── Dockerfile.airflow
+│   ├── Dockerfile.api
+│   ├── Dockerfile.dataloading
+│   ├── Dockerfile.evaluate
+│   ├── Dockerfile.mlflow
+│   ├── Dockerfile.preprocessing
+│   ├── Dockerfile.train
+│   ├── requirements-airflow.txt     # Dépendances Airflow
+│   ├── requirements-api.txt         # Dépendances FastAPI
+│   ├── requirements-dataloading.txt
+│   ├── requirements-evaluate.txt
+│   ├── requirements-mlflow.txt
+│   ├── requirements-preprocessing.txt
+│   └── requirements-train.txt
+├── docker-compose-template.yml        # Template du docker compose pour générer docker compose selon GPU ou CPU (selon fichier .env)
+├── docker-compose.yml                 # Orchestration des services via Docker Compose
+│
+├── models/                   # Modèles entraînés (.pkl ou autres)
+│
+├── mlruns/                   # Répertoire d’expérimentation MLflow (tracking local)
+│
+├── params.yaml               # Paramètres globaux pour le pipeline (modèle, seed, split, etc.)
+│
+├── src/                      # Code source modulaire pour chaque étape
+│   ├── dataloading/         # Scripts pour charger les données brutes
+│   ├── preprocessing/       # Feature engineering, normalisation, etc.
+│   ├── training/            # Entraînement de modèles
+│   ├── evaluation/          # Évaluation de performance
+│   └── utils/               # Fonctions utilitaires (log, I/O, etc.)
+│
+├── tests/                    # Tests unitaires Pytest pour chaque module
+│   ├── test_dataloading.py
+│   ├── test_preprocessing.py
+│   ├── test_training.py
+│   ├── test_evaluation.py
+│   └── conftest.py
+│
+├── .dvc/                     # Répertoire interne de configuration DVC
+├── .dvcignore                # Équiv. de .gitignore pour DVC
+├── .env                      # Variables d’environnement (ex: BASE_DIR)
+└── README.md                 # Documentation du projet (ce fichier)
+```
+🔍 Fichiers de configuration importants
+| Fichier              | Rôle                                                           |
+| -------------------- | -------------------------------------------------------------- |
+| `docker-compose.yml` | Lance tous les services nécessaires (Airflow, API, MLflow…)    |
+| `params.yaml`        | Centralise les hyperparamètres, chemins, splits, etc.          |
+| `processed.dvc`      | Suit les transformations de données via DVC                    |
+| `.dvcignore`         | Exclut certains fichiers des suivis DVC                        |
+| `.env`               | Définit les variables d’environnement Docker (base\_dir, etc.) |
+<br>Pour générer le fichier docker-compose.yml à partir du `docker-compose-template.yml`, il faut exécuter la commande : 
+```
+set -a && source .env && set +a && envsubst < docker-compose.template.yml > docker-compose.yml
+```
+---
+### 🧰 Services
+| Service     | Port | Description                     |
+| ----------- | ---- | ------------------------------- |
+| Airflow UI  | 8080 | Orchestration du pipeline       |
+| MLflow      | 5000 | Tracking des expériences        |
+| API FastAPI | 8000 | Endpoint de prédiction          |
+| PostgreSQL  |      | Backend Airflow & MLflow        |
+| Redis       |      | Message broker Airflow (Celery) |
+
+---
+### ▶️ Lancer l’environnement
+1. Prérequis
+
+    docker installé
+
+    Un fichier .env avec les variables suivantes : 
+    ```
+    # Description: Environment variables for the Rakuten project
+    # The account must be subscribed to the challenge https://challengedata.ens.fr/participants/challenges/35/
+    ENSDATA_LOGIN=
+    ENSDATA_PASSWORD=
+
+    # The path to the directory where the data is stored
+    DATA_RAW_DIR="./data/raw"
+    # The path to the directory where the the images of train dataset are stored
+    DATA_RAW_IMAGES_TRAIN_DIR="./data/raw/image_train"
+    # The path to the directory where the the images of test dataset are stored
+    DATA_RAW_IMAGES_TEST_DIR="./data/raw/image_test"
+
+    # The path to the directory where the processed data will be stored
+    DATA_PROCESSED_DIR="./data/processed"
+    # The path to the directory where the model will be stored
+    MODEL_DIR="./models"
+    # The path to the directory where the logs will be stored
+    LOGS_DIR="./logs"
+    # The path to the directory where the scores of model evaluation will be stored
+    METRICS_DIR="./metrics"
+
+    # Definition of the secret key for signing JWT tokens
+    # This key should be kept secret and not shared publicly
+    # It is used to ensure the integrity and authenticity of the JWT tokens
+    # It is recommended to use a strong, random key for production environments
+
+    JWT_SECRET_KEY = 
+
+    FERNET_KEY=
+
+    # Local directory where is stored the projet
+    BASE_DIR = 
+
+    # The Dockerfile to use for training the model
+    # If GPU is available, then set Dockerfile.evaluate_gpu
+    DOCKERFILE_TRAIN=docker/Dockerfile.train
+
+    # The Dockerfile to use for evaluating the model
+    # If GPU is available, then set Dockerfile.evaluate_gpu
+    DOCKERFILE_EVALUATE=docker/Dockerfile.evaluate
+
+    # The Dockerfile to use for launching API rest with the model
+    # If GPU is available, then set Dockerfile.api_gpu
+    DOCKERFILE_API=docker/Dockerfile.api
+    ```
+2. Lancement des services
+    ```
+    docker compose up --build
+    ```
+    Airflow sera accessible sur localhost:8080, et MLflow sur localhost:5000.
+---
+### ⚙️ Pipelines Airflow
+
+Le DAG principal (rakuten_dags.py) orchestre les étapes suivantes :
+- data_loading_task
+- preprocessing_task
+- training_task
+- evaluation_task
+- mlflow_dag_task
+
+---
+### 🧪 Suivi des expériences
+
+Les logs et artefacts d'entraînement sont automatiquement tracés dans MLflow :
+
+```http://localhost:5000 ```
+
+Le tracking inclut :
+- métriques d’évaluation
+- paramètres du modèle
+- visualisations
+
+---
+### 🌐 API de prédiction
+
+Un service FastAPI expose un endpoint sur le port 8000.
+
+---
+### 🧪 Tests et reproductibilité
+
+Les composants sont encapsulés dans des images Docker distinctes pour chaque étape (dataloading, preprocessing, etc.), facilitant l’isolation et les tests.
+
+---
+### 🗂️ Gestion des données avec DVC
+
+Les transformations sont suivies avec DVC pour permettre une versioning des datasets transformés.
+```
+dvc repro
+dvc push
+``` 
+
+---
+### ✅ Tests unitaires
+
+Le répertoire tests/ contient des tests unitaires pour valider les différentes étapes du pipeline ML : chargement des données, prétraitement, entraînement, prédiction, etc.
+📦 Structure
+```
+tests/
+├── test_dataloading.py
+├── test_preprocessing.py
+├── test_training.py
+├── test_evaluation.py
+└── conftest.py  # Fixtures partagées 
+```
+▶️ Exécution des tests
+
+Assure-toi d’avoir installé pytest (via pip install pytest ou via un requirements.txt), puis lance les tests avec :
+```
 python -m pytest
 ```
 
-# To launcher docker api specifically (it avoids the training phase of docker-compose pipeline)
-docker build -f docker/Dockerfile.api -t predict_api .
-docker run -p 8000:8000 -v ${PWD}/models:/app/models \
-    -v ${PWD}/data/processed:/app/data/processed \
-    predict_api:latest
+---
+### 📝 Auteurs
 
-# To launch the docker compose pipeline
-docker compose up --build
+- Olivier ISNARD
+- Christian SEGNOU
 
-
-# To launche the dvc pipeline
-dvc repro
-
-# Structure of repository
-This project is a MLOps projects based on the ENS Data challenge Rakuten. The problem raised by the challenge is a multi modal classification based on texts and images.
-
-Project Organization
-------------
-
-    ├── LICENSE
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources -> the external data you want to make a prediction on
-    │   ├── preprocessed      <- The final, canonical data sets for modeling.
-    |   |  ├── image_train <- Where you put the images of the train set
-    |   |  ├── image_test <- Where you put the images of the predict set
-    |   |  ├── X_train_update.csv    <- The csv file with te columns designation, description, productid, imageid like in X_train_update.csv
-    |   |  ├── X_test_update.csv    <- The csv file with te columns designation, description, productid, imageid like in X_train_update.csv
-    │   └── raw            <- The original, immutable data dump.
-    |   |  ├── image_train <- Where you put the images of the train set
-    |   |  ├── image_test <- Where you put the images of the predict set
-    │
-    ├── logs               <- Logs from training and predicting
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   ├── main.py        <- Scripts to train models 
-    │   ├── predict.py     <- Scripts to use trained models to make prediction on the files put in ../data/preprocessed
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   ├── check_structure.py    
-    │   │   ├── import_raw_data.py 
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models                
-    │   │   └── train_model.py
-    │   └── config         <- Describe the parameters used in train_model.py and predict_model.py
-
---------
-You need to define a ` ./.env` file including the following environment variables :
-- `ENSDATA_LOGIN`: your login to your challengedataens account
-- `ENSDATA_PASSWORD`: your password to your challengedataens account
-Your account must subscribed to the challenge https://challengedata.ens.fr/participants/challenges/35/ 
-
-<br>The following environnement must be also defined (default values are provided):
-```
-DATA_RAW_DIR="./data/raw"                           # The path to the directory where the data is stored
-DATA_RAW_IMAGES_TRAIN_DIR="./data/raw/image_train"  # The path to the directory where the the images of train dataset are stored
-DATA_RAW_IMAGES_TEST_DIR="./data/raw/image_test"    # The path to the directory where the the images of test dataset are stored
-DATA_PROCESSED_DIR="./data/processed"               # The path to the directory where the processed data will be stored
-MODEL_DIR="./models"                                # The path to the directory where the model will be stored
-LOGS_DIR="./logs"                                   # The path to the directory where the logs will be stored
-```
---------
-Once you have downloaded the github repo, open the anaconda powershell on the root of the project and follow those instructions :
-
-> `conda create -n "Rakuten-project"`    <- It will create your conda environement
-
-> `conda activate Rakuten-project`       <- It will activate your environment
-
-> `conda install pip`                    <- May be optionnal
-
-> `pip install -r requirements.txt`      <- It will install the required packages
-
-> `python src/data/import_raw_data.py`   <- It will import the tabular data on data/raw/
-
-> Upload the image data folder set directly on local from https://challengedata.ens.fr/participants/challenges/35/, you should save the folders image_train and image_test respecting the following structure
-
-    ├── data
-    │   └── raw           
-    |   |  ├── image_train 
-    |   |  ├── image_test 
-
-> `python src/data/make_dataset.py data/raw data/preprocessed`      <- It will copy the raw dataset and paste it on data/preprocessed/
-
-> `python src/main.py`                   <- It will train the models on the dataset and save them in models. By default, the number of epochs = 1
-
-> `python src/predict.py`                <- It will use the trained models to make a prediction (of the prdtypecode) on the desired data, by default, it will predict on the train. You can pass the path to data and images as arguments if you want to change it
->
-    Exemple : python src/predict_1.py --dataset_path "data/preprocessed/X_test_update.csv" --images_path "data/preprocessed/image_test"
-                                        
-                                         The predictions are saved in data/preprocessed as 'predictions.json'
-
-> You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
-> 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
-python make_dataset.py "../../data/raw" "../../data/preprocessed"
+Encadré dans le cadre de la formation MLOps par Maria de DataScientest.

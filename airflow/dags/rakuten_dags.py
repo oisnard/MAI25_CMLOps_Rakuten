@@ -19,6 +19,11 @@ logger.info(f"************** Base directory: {BASE_DIR}")
 USE_GPU = os.getenv('USE_GPU', 'false').lower() == 'true'
 logger.info(f"************** USE_GPU = {USE_GPU}")
 
+
+train_kwargs = {}
+if USE_GPU:
+    train_kwargs["runtime"] = "nvidia"  # Utilise le runtime NVIDIA si USE_GPU est True
+
 #with open("/home/dransi/debug.txt", 'w') as file:
 #    file.write(f"Base directory: {BASE_DIR}\n")
 default_args = {
@@ -98,7 +103,7 @@ with DAG(
         environment={
             "USE_GPU": os.getenv('USE_GPU', 'false'),
         },
-        runtime="nvidia" if USE_GPU else None,
+        **train_kwargs,
  )
 
     # Étape 3 : Évaluation
@@ -116,10 +121,7 @@ with DAG(
             Mount(source=f"{BASE_DIR}/models", target='/app/models', type='bind'),
             Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
         ],
-        environment={
-            "USE_GPU": os.getenv('USE_GPU', 'false'),
-        },
-        runtime="nvidia" if USE_GPU else None,
+        **train_kwargs,
 )
 
 

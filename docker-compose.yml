@@ -138,6 +138,9 @@ services:
       - ./data:/app/data
       - ./src:/app/src
   training:
+    env_file: .env
+    environment:
+      - USE_GPU=${USE_GPU}
     build:
       context: .
       dockerfile: docker/Dockerfile.train
@@ -148,6 +151,9 @@ services:
       - ./models:/app/models
       - ./mlruns:/app/mlruns
   evaluation:
+    env_file: .env
+    environment:
+      - USE_GPU=${USE_GPU}
     build:
       context: .
       dockerfile: docker/Dockerfile.evaluate

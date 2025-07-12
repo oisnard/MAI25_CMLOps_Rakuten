@@ -16,6 +16,9 @@ if BASE_DIR is None:
     raise ValueError("La variable d'environnement BASE_DIR est manquante.")
 logger.info(f"************** Base directory: {BASE_DIR}")
 
+USE_GPU = os.getenv('USE_GPU', 'false').lower() == 'true'
+logger.info(f"************** USE_GPU = {USE_GPU}")
+
 #with open("/home/dransi/debug.txt", 'w') as file:
 #    file.write(f"Base directory: {BASE_DIR}\n")
 default_args = {
@@ -92,7 +95,11 @@ with DAG(
             Mount(source=f"{BASE_DIR}/mlruns", target='/app/mlruns', type='bind'),
             Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
         ],
-    )
+        environment={
+            "USE_GPU": os.getenv('USE_GPU', 'false'),
+        },
+        runtime="nvidia" if USE_GPU else None,
+ )
 
     # Étape 3 : Évaluation
     evaluate = DockerOperator(
@@ -109,7 +116,11 @@ with DAG(
             Mount(source=f"{BASE_DIR}/models", target='/app/models', type='bind'),
             Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
         ],
-    )
+        environment={
+            "USE_GPU": os.getenv('USE_GPU', 'false'),
+        },
+        runtime="nvidia" if USE_GPU else None,
+)
 
 
 

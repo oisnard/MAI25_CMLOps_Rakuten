@@ -17,6 +17,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.airflow
+      args:
+        DOCKER_GID: ${DOCKER_GID}
     image: custom_airflow:2.9.1
     env_file: .env
     restart: always
@@ -49,6 +51,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.airflow
+      args:
+        DOCKER_GID: ${DOCKER_GID}
     image: custom_airflow:2.9.1
     env_file: .env
     restart: always
@@ -73,6 +77,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.airflow
+      args:
+        DOCKER_GID: ${DOCKER_GID}
     image: custom_airflow:2.9.1
     env_file: .env
     restart: always

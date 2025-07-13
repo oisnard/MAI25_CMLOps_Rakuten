@@ -17,6 +17,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.airflow
+      args:
+        DOCKER_GID: 988
     image: custom_airflow:2.9.1
     env_file: .env
     restart: always
@@ -30,7 +32,7 @@ services:
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__WEBSERVER__SECRET_KEY: aed2e9108e5e161ca37c111e14b1c3f9f4d307f79f2c58ec4993fd37e64c2815
       AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
-      BASE_DIR: /home/dransi/MAI25_CMLOps_Rakuten
+      BASE_DIR: /home/ubuntu/mai25_CMLops/MAI25_CMLOps_Rakuten
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -49,6 +51,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.airflow
+      args:
+        DOCKER_GID: 988
     image: custom_airflow:2.9.1
     env_file: .env
     restart: always
@@ -61,7 +65,7 @@ services:
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__WEBSERVER__SECRET_KEY: aed2e9108e5e161ca37c111e14b1c3f9f4d307f79f2c58ec4993fd37e64c2815
       AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
-      BASE_DIR: /home/dransi/MAI25_CMLOps_Rakuten
+      BASE_DIR: /home/ubuntu/mai25_CMLops/MAI25_CMLOps_Rakuten
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -73,6 +77,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.airflow
+      args:
+        DOCKER_GID: 988
     image: custom_airflow:2.9.1
     env_file: .env
     restart: always
@@ -141,7 +147,7 @@ services:
   training:
     build:
       context: .
-      dockerfile: docker/Dockerfile.train
+      dockerfile: docker/Dockerfile.train_gpu
     image: mai25_cmlops_rakuten_train
     volumes:
       - ./data:/app/data
@@ -152,7 +158,7 @@ services:
   evaluation:
     build:
       context: .
-      dockerfile: docker/Dockerfile.evaluate
+      dockerfile: docker/Dockerfile.evaluate_gpu
       # docker/Dockerfile.evaluate
     image: mai25_cmlops_rakuten_evaluate
     volumes:

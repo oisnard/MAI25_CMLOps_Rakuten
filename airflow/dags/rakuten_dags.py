@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.utils.dates import days_ago
 from datetime import timedelta
-from docker.types import Mount
+from docker.types import Mount, DeviceRequest
 import os
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +22,10 @@ logger.info(f"************** USE_GPU = {USE_GPU}")
 
 train_kwargs = {}
 if USE_GPU:
-    train_kwargs["runtime"] = "nvidia"  # Utilise le runtime NVIDIA si USE_GPU est True
+    train_kwargs["device_requests"] = [
+        DeviceRequest(count=-1, capabilities=[["gpu"]])
+    ]
+
 
 #with open("/home/dransi/debug.txt", 'w') as file:
 #    file.write(f"Base directory: {BASE_DIR}\n")
@@ -87,7 +90,7 @@ with DAG(
     # Étape 2 : Entraînement
     train = DockerOperator(
         task_id='training_task',
-        image='mai25_cmlops_rakuten_train',
+        image='mai25_cmlops_rakuten_train:latest',
         api_version='auto',
         auto_remove=True,
         command='python -m src.models.train_model_mlflow',
@@ -109,7 +112,7 @@ with DAG(
     # Étape 3 : Évaluation
     evaluate = DockerOperator(
         task_id='evaluation_task',
-        image='mai25_cmlops_rakuten_evaluate',
+        image='mai25_cmlops_rakuten_evaluate:latest',
         api_version='auto',
         auto_remove=True,
         command='python -m src.models.evaluate_model',

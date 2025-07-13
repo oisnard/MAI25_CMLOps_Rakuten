@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.19.0-gpu
+FROM tensorflow/tensorflow:2.15.0-gpu
 
 WORKDIR /app
 ENV PYTHONPATH=/app
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y git
 # Install pip dependencies
 COPY docker/requirements.train_gpu.txt .
 RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.train_gpu.txt
+RUN pip install --no-cache-dir --ignore-installed -r requirements.train_gpu.txt
 
 # Pre-download the model
 RUN python -c "from transformers import CamembertTokenizer, TFCamembertModel; \

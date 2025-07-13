@@ -49,7 +49,7 @@ def main():
     # Set up logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
-
+    logging.info("Available GPUs: %s", tf.config.list_physical_devices('GPU'))
     # Load dataset parameters from YAML file
     params = tools.load_dataset_params_from_yaml()
 

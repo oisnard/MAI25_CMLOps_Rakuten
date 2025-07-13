@@ -1,0 +1,28 @@
+FROM tensorflow/tensorflow:2.19.0-gpu
+
+WORKDIR /app
+ENV PYTHONPATH=/app
+ENV TRANSFORMERS_CACHE=/app/.cache/huggingface
+ENV HF_HOME=/app/.cache/huggingface
+RUN mkdir -p $TRANSFORMERS_CACHE
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y git
+
+# Install pip dependencies
+COPY docker/requirements.train_gpu.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.train_gpu.txt
+
+# Pre-download the model
+RUN python -c "from transformers import CamembertTokenizer, TFCamembertModel; \
+               CamembertTokenizer.from_pretrained('almanach/camembert-base'); \
+               TFCamembertModel.from_pretrained('almanach/camembert-base')"
+
+# Copy environment and source files
+COPY .env /app/.env
+COPY params.yaml ./params.yaml
+COPY src/ /app/src/
+COPY setup.py .
+
+# CMD ["python", "-m", "src.models.train_model_mlflow"]

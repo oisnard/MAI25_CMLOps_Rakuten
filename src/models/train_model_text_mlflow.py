@@ -8,6 +8,7 @@ import logging
 import mlflow
 #import mlflow.tensorflow # --> A retirer, génère des incompatibilités entre keras 3.x et transformers
 
+
 def load_datasets() -> tuple:
     """
     Function to load the datasets for training and validation.
@@ -62,6 +63,8 @@ def load_datasets() -> tuple:
 
 def main():
     logging.basicConfig(level=logging.INFO)
+
+    logging.info("Available GPUs: %s", tf.config.list_physical_devices('GPU'))
 
     params = tools.load_dataset_params_from_yaml()
     DATA_RATIO = params['data_ratio']

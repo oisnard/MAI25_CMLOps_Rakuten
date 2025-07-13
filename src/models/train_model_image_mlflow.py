@@ -68,7 +68,8 @@ def load_datasets() -> tuple:
 def main():
     logging.basicConfig(level=logging.INFO)
     logging.info("Training model based on images...")
-
+    logging.info("Available GPUs: %s", tf.config.list_physical_devices('GPU'))
+    # Load parameters from YAML file
     params = tools.load_dataset_params_from_yaml()
 
    # Load dataset parameters from YAML file

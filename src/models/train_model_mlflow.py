@@ -25,5 +25,6 @@ if __name__ == "__main__":
     elif MODEL_TYPE == 'image':
         import src.models.train_model_image_mlflow
     elif MODEL_TYPE == 'merged':
-        logger.info("Merged model training is not implemented yet.")
-        raise NotImplementedError("Merged model training is not implemented yet.")
+        import src.models.train_model_both_mlflow
+    else:
+        raise NotImplementedError(f"MODEL TYPE {MODEL_TYPE} not implemented. Please check the model_selection in params.yaml.")

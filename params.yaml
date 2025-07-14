@@ -34,7 +34,7 @@ models_parameters :
     nb_trainable_layers : 5
 
 # Selection of model type for training and evaluation
-# model_type values can be "image" or "text" or "merged" (merged model not implemented yet)
+# model_type values can be "image" or "text" or "merged" 
 model_selection :
-  model_type : "text"
+  model_type : "merged"
 

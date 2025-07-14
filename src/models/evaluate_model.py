@@ -26,4 +26,6 @@ if __name__ == "__main__":
         import src.models.evaluate_model_image
     elif MODEL_TYPE == 'merged':
         import src.models.evaluate_model_both
+    else:
+        logger.error(f"Model type {MODEL_TYPE} is not implemented. Please check the model_selection in params.yaml.")
         raise NotImplementedError(f"Model type {MODEL_TYPE} is not implemented. Please check the model_selection in params.yaml.")

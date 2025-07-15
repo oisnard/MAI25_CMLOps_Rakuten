@@ -9,60 +9,6 @@ import src.models.models as models
 import src.models.metrics as metrics
 import mlflow 
 
-# Function to load datasets
-def load_datasets() -> tuple:
-    """
-    Function to load the datasets for training and validation.
-    Returns:
-        X_train, y_train, X_val, y_val, X_test, y_test : DataFrames containing the training and validation data.
-    """
-    try:
-        X_train = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "X_train.csv"), index_col=0)
-        y_train = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "y_train.csv"), index_col=0)
-        X_val = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "X_val.csv"), index_col=0)
-        y_val = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "y_val.csv"), index_col=0)
-    except FileNotFoundError as e:
-        logging.error(f"File not found: {e}")
-        raise
-    except Exception as e:
-        logging.error(f"An error occurred while loading datasets: {e}")
-        raise
-    # Ensure that the datasets are not empty
-    if X_train.empty or y_train.empty or X_val.empty or y_val.empty:
-        logging.error("One or more datasets are empty.")
-        raise ValueError("One or more datasets are empty.")
-    # Ensure that the indices of X_train and y_train match
-    if not X_train.index.equals(y_train.index):
-        logging.error("Indices of X_train and y_train do not match.")
-        raise ValueError("Indices of X_train and y_train do not match.")
-    if not X_val.index.equals(y_val.index):
-        logging.error("Indices of X_val and y_val do not match.")
-        raise ValueError("Indices of X_val and y_val do not match.")
-    # Ensure that the 'feature' column exists in X_train, X_val, and X_test
-    if 'image_path' not in X_train.columns or 'image_path' not in X_val.columns:
-        logging.error("The 'image_path' column is missing in one of the datasets.")
-        raise ValueError("The 'image_path' column is missing in one of the datasets.")
-    # Ensure that the 'prdtypecode' column exists in y_train, y_val, and y_test
-    if 'prdtypecode' not in y_train.columns or 'prdtypecode' not in y_val.columns:
-        logging.error("The 'prdtypecode' column is missing in one of the label datasets.")
-        raise ValueError("The 'prdtypecode' column is missing in one of the label datasets.")
-    # Ensure that the 'prdtypecode' column is of integer type
-    if not pd.api.types.is_integer_dtype(y_train['prdtypecode']) or not pd.api.types.is_integer_dtype(y_val['prdtypecode']):
-        logging.error("The 'prdtypecode' column must be of integer type.")
-        raise ValueError("The 'prdtypecode' column must be of integer type.")
-    # Ensure that the 'image_path' column is of string type
-    if not pd.api.types.is_string_dtype(X_train['image_path']) or not pd.api.types.is_string_dtype(X_val['feature']):
-        logging.error("The 'image_path' column must be of string type.")
-        raise ValueError("The 'image_path' column must be of string type.")
-    # Ensure that the 'prdtypecode' column is not empty
-    if y_train['prdtypecode'].isnull().any() or y_val['prdtypecode'].isnull().any():
-        logging.error("The 'prdtypecode' column contains null values.")
-        raise ValueError("The 'prdtypecode' column contains null values.")
-    # Ensure that the 'feature' column is not empty
-    if X_train['image_path'].isnull().any() or X_val['image_path'].isnull().any():
-        logging.error("The 'image_path' column contains null values.")
-        raise ValueError("The 'image_path' column contains null values.")
-    return X_train, X_val, y_train, y_val
 
 
 def main():
@@ -96,7 +42,7 @@ def main():
 
     # Load datasets
     logging.info("Loading datasets...")
-    X_train, X_val, y_train, y_val = load_datasets()    
+    X_train, X_val, y_train, y_val = tools.load_datasets()    
     logging.info(f"Shapes - X_train: {X_train.shape}, y_train: {y_train.shape}, X_val: {X_val.shape}, y_val: {y_val.shape}")
     # Check if the datasets are not empty
     if X_train.empty or y_train.empty or X_val.empty or y_val.empty:

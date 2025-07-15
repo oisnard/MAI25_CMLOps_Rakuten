@@ -9,57 +9,6 @@ import mlflow
 #import mlflow.tensorflow # --> A retirer, génère des incompatibilités entre keras 3.x et transformers
 
 
-def load_datasets() -> tuple:
-    """
-    Function to load the datasets for training and validation.
-    Returns:
-        X_train, y_train, X_val, y_val : DataFrames containing the training and validation data.
-    """
-    try:
-        X_train = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "X_train.csv"), index_col=0)
-        y_train = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "y_train.csv"), index_col=0)
-        X_val = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "X_val.csv"), index_col=0)
-        y_val = pd.read_csv(os.path.join(tools.DATA_PROCESSED_DIR, "y_val.csv"), index_col=0)
-    except FileNotFoundError as e:
-        logging.error(f"File not found: {e}")
-        raise
-    except Exception as e:
-        logging.error(f"An error occurred while loading datasets: {e}")
-        raise
-
-    if X_train.empty or y_train.empty or X_val.empty or y_val.empty:
-        logging.error("One or more datasets are empty.")
-        raise ValueError("One or more datasets are empty.")
-
-    if not X_train.index.equals(y_train.index) or not X_val.index.equals(y_val.index):
-        logging.error("Indices of features and labels do not match.")
-        raise ValueError("Indices of features and labels do not match.")
-
-    if 'feature' not in X_train.columns or 'feature' not in X_val.columns:
-        logging.error("The 'feature' column is missing in one of the datasets.")
-        raise ValueError("The 'feature' column is missing in one of the datasets.")
-
-    if 'prdtypecode' not in y_train.columns or 'prdtypecode' not in y_val.columns:
-        logging.error("The 'prdtypecode' column is missing in one of the label datasets.")
-        raise ValueError("The 'prdtypecode' column is missing in one of the label datasets.")
-
-    if not pd.api.types.is_integer_dtype(y_train['prdtypecode']) or not pd.api.types.is_integer_dtype(y_val['prdtypecode']):
-        logging.error("The 'prdtypecode' column must be of integer type.")
-        raise ValueError("The 'prdtypecode' column must be of integer type.")
-
-    if not pd.api.types.is_string_dtype(X_train['feature']) or not pd.api.types.is_string_dtype(X_val['feature']):
-        logging.error("The 'feature' column must be of string type.")
-        raise ValueError("The 'feature' column must be of string type.")
-
-    if y_train['prdtypecode'].isnull().any() or y_val['prdtypecode'].isnull().any():
-        logging.error("The 'prdtypecode' column contains null values.")
-        raise ValueError("The 'prdtypecode' column contains null values.")
-
-    if X_train['feature'].isnull().any() or X_val['feature'].isnull().any():
-        logging.error("The 'feature' column contains null values.")
-        raise ValueError("The 'feature' column contains null values.")
-
-    return X_train, X_val, y_train, y_val
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -74,7 +23,7 @@ def main():
     EPOCHS = params['training_parameters']['epochs']
 
     logging.info("Loading datasets...")
-    X_train, X_val, y_train, y_val = load_datasets()    
+    X_train, X_val, y_train, y_val = tools.load_datasets()    
     logging.info(f"Shapes - X_train: {X_train.shape}, y_train: {y_train.shape}, X_val: {X_val.shape}, y_val: {y_val.shape}")
 
     logging.info("Setting experiment...")

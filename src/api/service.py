@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-from src.models.predict_text import predict_text 
+from src.models.predict_text import predict_text
+from src.models.predict_txt_img import predict_text_image
 from src.data.make_dataset import remove_all_html_tags
 from src.api.middleware import JWTAuthMiddleware
 
@@ -17,18 +18,20 @@ class TextRequest(BaseModel):
 class ProductDefinition(BaseModel):
     designation: str
     description: str
+    image_filepath: str = None  # Optional field for image file path
 
 class ListProductDefinition(BaseModel):
     designations: List[str]
     descriptions: List[str]
+    image_filepaths: List[str] = None  # Optional field for image file paths
 
-@app.post("/predict_text", summary="Predict a product prdtypecode from its designation and description")
-async def predict_text_endpoint(request: ProductDefinition):
+@app.post("/predict_product", summary="Predict a product prdtypecode from its designation and description")
+async def predict_product_endpoint(request: ProductDefinition):
     """
     Predict product type category (prdtypecode) for a given product designation and description.
     
     Args:
-        request (ProductDefinition): Product details containing designation and description.
+        request (ProductDefinition): Product details containing designation and description and filepath of product image.
         
     Returns:
         dict: Predicted categories for the product.
@@ -38,15 +41,23 @@ async def predict_text_endpoint(request: ProductDefinition):
     
     text = f"{request.designation}. {request.description or ''}"
     text = remove_all_html_tags(text)  # Clean the text from HTML tags
-
+    if request.image_filepath:
+        image_filepaths = [request.image_filepath]
+    else:
+        image_filepaths = None
     try:
-        predictions = predict_text([text])
+        if image_filepaths:
+            predictions = predict_text_image([text], image_filepaths)
+        else:
+            predictions = predict_text([text])
+        if -1 in predictions:
+            raise HTTPException(status_code=500, detail="Model prediction not available for predictions")
         return {"predicted prdtypecode": predictions[0]}  # Return the first prediction
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/predict_text_batch", summary="Predict a product prdtypecode from a batch of designations and descriptions")
-async def predict_text_batch_endpoint(request: ListProductDefinition):
+@app.post("/predict_product_batch", summary="Predict a product prdtypecode from a batch of designations and descriptions")
+async def predict_product_batch_endpoint(request: ListProductDefinition):
     """
     Predict product type categories (prdtypecode) for a batch of products.
     Args:
@@ -60,9 +71,18 @@ async def predict_text_batch_endpoint(request: ListProductDefinition):
         raise HTTPException(status_code=400, detail="At least one designation is required.")
     texts = [f"{d}. {desc or ''}" for d, desc in zip(request.designations, request.descriptions)]
     texts = [remove_all_html_tags(text) for text in texts]  # Clean the text from HTML tags
+    if request.image_filepaths and len(request.image_filepaths) != len(texts):
+        raise HTTPException(status_code=400, detail="Image file paths must match the number of texts.")
+    else:
+        image_filepaths = request.image_filepaths
 
     try:
-        predictions = predict_text(texts)
+        if image_filepaths:
+            predictions = predict_text_image(texts, image_filepaths)
+        else:
+            predictions = predict_text(texts)
+        if -1 in predictions:
+            raise HTTPException(status_code=500, detail="Model prediction not available for predictions")
         return {"predicted prdtypecodes": predictions}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

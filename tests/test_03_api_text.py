@@ -6,10 +6,10 @@ from src.api.service import app
 #client = TestClient(app)
     
 
-def test_predict_text_endpoint(test_client, auth_headers):
-    """Test the /predict_text endpoint with a valid request.
+def test_predict_product_endpoint(test_client, auth_headers):
+    """Test the /predict_product endpoint with a valid request.
     """
-    endpoint = "/predict_text"
+    endpoint = "/predict_product"
     data = {
         "designation": "Chaussures de sport",
         "description": "Chaussures pour la course à pied et l'entraînement."
@@ -18,10 +18,10 @@ def test_predict_text_endpoint(test_client, auth_headers):
     assert response.status_code == 200
     assert "predicted prdtypecode" in response.json()
 
-def test_predict_text_endpoint_missing_designation(test_client, auth_headers):
-    """Test the /predict_text endpoint with a missing designation.
+def test_predict_product_endpoint_missing_designation(test_client, auth_headers):
+    """Test the /predict_product endpoint with a missing designation.
     """
-    endpoint = "/predict_text"
+    endpoint = "/predict_product"
     data = {
         "description": "Chaussures pour la course à pied et l'entraînement."
     }
@@ -29,10 +29,10 @@ def test_predict_text_endpoint_missing_designation(test_client, auth_headers):
     assert response.status_code == 422  # Unprocessable Entity
 
 
-def test_predict_text_batch_endpoint(test_client, auth_headers):
-    """Test the /predict_text_batch endpoint with a valid request.
+def test_predict_product_batch_endpoint(test_client, auth_headers):
+    """Test the /predict_product_batch endpoint with a valid request.
     """
-    endpoint = "/predict_text_batch"
+    endpoint = "/predict_product_batch"
     data = {
         "designations": ["Chaussures de sport", "Chaussures de randonnée"],
         "descriptions": ["Chaussures pour la course à pied et l'entraînement.", "Chaussures robustes pour la randonnée en montagne."]
@@ -41,10 +41,10 @@ def test_predict_text_batch_endpoint(test_client, auth_headers):
     assert response.status_code == 200
     assert "predicted prdtypecodes" in response.json()
 
-def test_predict_text_batch_endpoint_mismatched_lengths(test_client, auth_headers):
-    """Test the /predict_text_batch endpoint with mismatched lengths of designations and descriptions.
+def test_predict_product_batch_endpoint_mismatched_lengths(test_client, auth_headers):
+    """Test the /predict_product_batch endpoint with mismatched lengths of designations and descriptions.
     """
-    endpoint = "/predict_text_batch"
+    endpoint = "/predict_product_batch"
     data = {
         "designations": ["Chaussures de sport", "Chaussures de randonnée"],
         "descriptions": ["Chaussures pour la course à pied et l'entraînement.", "Chaussures robustes pour la randonnée en montagne."]
@@ -53,10 +53,10 @@ def test_predict_text_batch_endpoint_mismatched_lengths(test_client, auth_header
     assert response.status_code == 200
     assert "predicted prdtypecodes" in response.json()
 
-def test_predict_text_batch_endpoint_mismatched_lengths(test_client, auth_headers):
-    """Test the /predict_text_batch endpoint with mismatched lengths of designations and descriptions.
+def test_predict_product_batch_endpoint_mismatched_lengths(test_client, auth_headers):
+    """Test the /predict_product_batch endpoint with mismatched lengths of designations and descriptions.
     """
-    endpoint = "/predict_text_batch"
+    endpoint = "/predict_product_batch"
     data = {
         "designations": ["Chaussures de sport", "Chaussures de randonnée"],
         "descriptions": ["Chaussures pour la course à pied et l'entraînement."]
@@ -65,10 +65,10 @@ def test_predict_text_batch_endpoint_mismatched_lengths(test_client, auth_header
     assert response.status_code == 400
     assert "Designations and descriptions must have the same length." in response.json()["detail"]
 
-def test_predict_text_batch_endpoint_missing_designations(test_client, auth_headers):
-    """Test the /predict_text_batch endpoint with missing designations.
+def test_predict_product_batch_endpoint_missing_designations(test_client, auth_headers):
+    """Test the /predict_product_batch endpoint with missing designations.
     """
-    endpoint = "/predict_text_batch"
+    endpoint = "/predict_product_batch"
     data = {
         "descriptions": ["Chaussures pour la course à pied et l'entraînement.", "Chaussures robustes pour la randonnée en montagne."]
     }

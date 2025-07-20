@@ -1,6 +1,15 @@
 # Ratio of data to be used for training and testing (in order to avoid long model training on AWS GPU)
 data_ratio : 0.1
 
+# Ratio of data to be used for baseline dataset creation
+baseline_ratio : 0.4
+
+# Nb of datastreams to be created
+# This parameter defines how many datastreams will be created from the available data
+# It is used to simulate a real-world scenario where data is split into several parts
+nb_datastreams : 10
+
+
 # Definition of the data split parameters
 data_split : 
   validation_size : 0.15

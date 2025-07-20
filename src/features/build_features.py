@@ -130,11 +130,43 @@ def build_features(X: pd.DataFrame,
     X['RMS_contrast'] = X['image_path'].apply(compute_RMS_contrast)
     X['sharpness'] = X['image_path'].apply(compute_sharpness)
     X['normalized_useful_surface'] = X['image_path'].apply(compute_normalized_useful_surface)
-    X['prdtypecode'] = y['prdtypecode'].values
+
+    dict_mapping_reverse = tools.load_reverse_mapping_dict()
+    if dict_mapping_reverse is None:
+        logging.error("Failed to load the reverse mapping dictionary.")
+        raise ValueError("Failed to load the reverse mapping dictionary.")
+    # Convert integer predictions to prdtypecode using the reverse mapping dictionary
+    y_prdtypecode = [dict_mapping_reverse.get(pred, "Unknown") for pred in y['prdtypecode'].values.tolist()]
+
+    X['prdtypecode'] = y_prdtypecode
 
     return X
 
+def current_datastream_name() -> str:
+    """
+    Get the name of the current datastream.
+    
+    Returns:
+        str: The name of the current datastream.
+    """
+    if not os.path.exists(tools.DATA_PROCESSED_STREAM_DIR):
+        logging.error("DATA_PROCESSED_STREAM_DIR does not exist.")
+        raise FileNotFoundError("DATA_PROCESSED_STREAM_DIR does not exist.")
 
+    files = os.listdir(tools.DATA_PROCESSED_STREAM_DIR)
+    if not files:
+        logging.error("No datastream files found in DATA_PROCESSED_STREAM_DIR. Datastream creation might not have been completed.")
+        raise FileNotFoundError("No datastream files found in DATA_PROCESSED_STREAM_DIR.")
+
+    X_files = sorted(f for f in os.listdir(tools.DATA_PROCESSED_STREAM_DIR) if f.startswith("X_") and f.endswith(".csv"))
+    if not X_files:
+        logging.error("No X datastream files found in DATA_PROCESSED_STREAM_DIR.")
+        raise FileNotFoundError("No X datastream files found in DATA_PROCESSED_STREAM_DIR.")
+    
+    stream_name = X_files[-1].split('_', 1)[1].rsplit('.', 1)[0]  # Extract the stream name from the first X file
+
+    # Assuming the first file is the current datastream
+    return stream_name
 
 def main():
     """
@@ -150,13 +182,18 @@ def main():
         logging.error(f"Invalid MODEL_NAME value: {MODEL_NAME}. It should be a non-empty string.")
         raise ValueError(f"Invalid MODEL_NAME value: {MODEL_NAME}. It should be a non-empty string.")
     
+    logging.info(f"Using model: {MODEL_NAME}")
+    datastream_name = current_datastream_name()
+    logging.info(f"Current datastream name: {datastream_name}")
+
     # Load the dataset
-    X_train, X_val, y_train, y_val = tools.load_datasets()
+    X_train, X_val, y_train, y_val, X_test, y_test = tools.load_full_datasets()
     try:
         logging.info("Building features for the dataset...")        
         # Build features
-        df = build_features(X_train, y_train, MODEL_NAME)
-        print(df.head())
+        X = pd.concat([X_train, X_val, X_test], axis=0)
+        y = pd.concat([y_train, y_val, y_test], axis=0)
+        df = build_features(X, y, MODEL_NAME)
         # Save the processed DataFrame
         df.to_csv(os.path.join(tools.DATA_PROCESSED_DIR, "processed_train_dataset.csv"), index=True)
         

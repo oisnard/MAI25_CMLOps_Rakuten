@@ -37,9 +37,9 @@ default_args = {
     'execution_timeout': timedelta(hours=1),
 }
 with DAG(
-    dag_id='rakuten_full_pipeline_dag',
+    dag_id='rakuten_datastream_pipeline_dag',
     default_args=default_args,
-    description='Pipeline complet : data loading, preprocessing, training, évaluation',
+    description='Pipeline complet pour traiter plusieurs flux de données : data loading, preprocessing, training, évaluation',
     schedule_interval='@daily',
     start_date=days_ago(1),
     catchup=False,
@@ -67,12 +67,12 @@ with DAG(
 
 
     # Étape 1 : Prétraitement
-    preprocess = DockerOperator(
-        task_id='preprocessing_task',
-        image='mai25_cmlops_rakuten_preprocessing',
+    make_datastream = DockerOperator(
+        task_id='makedatastreams_task',
+        image='mai25_cmlops_rakuten_make_datastreams',
         api_version='auto',
         auto_remove=True,
-        command='python -m src.data.make_dataset',
+        command='python -m src.data.make_datastream',
         docker_url='unix://var/run/docker.sock',
         network_mode='bridge',
         mount_tmp_dir=False,
@@ -82,9 +82,23 @@ with DAG(
         ],
     )
 
+    # Étape 2 : Preprocessing des flux de données
+    process_datastream = DockerOperator(
+        task_id='preprocessing_task',
+        image='mai25_cmlops_rakuten_preprocessing_datastreams',
+        api_version='auto',
+        auto_remove=True,
+        command='python -m src.data.process_datastream',
+        docker_url='unix://var/run/docker.sock',
+        network_mode='bridge',
+        mount_tmp_dir=False,
+        mounts=[
+            Mount(source=f"{BASE_DIR}/data", target='/app/data', type='bind'),
+            Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
+        ],
+    )
 
-
-    # Étape 2 : Entraînement
+    # Étape 3 : Entraînement
     train = DockerOperator(
         task_id='training_task',
         image='mai25_cmlops_rakuten_train:latest',
@@ -106,7 +120,7 @@ with DAG(
         **train_kwargs,
  )
 
-    # Étape 3 : Évaluation
+    # Étape 4 : Évaluation
     evaluate = DockerOperator(
         task_id='evaluation_task',
         image='mai25_cmlops_rakuten_evaluate:latest',
@@ -125,5 +139,4 @@ with DAG(
 )
 
 
-
-    data_loading >> preprocess >> train >> evaluate
+    data_loading >> make_datastream >> process_datastream >> train >> evaluate

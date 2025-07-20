@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import List
 from src.models.predict_text import predict_text
 from src.models.predict_txt_img import predict_text_image
-from src.data.make_dataset import remove_all_html_tags
+from src.data.preprocessing import remove_all_html_tags
 from src.api.middleware import JWTAuthMiddleware
 
 app = FastAPI(title="Rakuten Product Prediction API",

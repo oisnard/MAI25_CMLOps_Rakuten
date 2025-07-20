@@ -144,6 +144,25 @@ services:
       - ./data:/app/data
       - ./src:/app/src
 
+  make_datastreams:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.make_datastreams
+    image: mai25_cmlops_rakuten_make_datastream
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+
+
+  preprocessing_datastreams:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.preprocessing_datastreams
+    image: mai25_cmlops_rakuten_preprocessing_datastreams
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+
   training:
     build:
       context: .

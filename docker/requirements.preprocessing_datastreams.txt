@@ -1,0 +1,12 @@
+pandas==2.2.3
+numpy==2.2.6
+python-dateutil==2.9.0.post0
+pytz==2025.2
+PyYAML==6.0.2
+tqdm==4.67.1
+typing_extensions==4.13.2
+python-dotenv
+beautifulsoup4
+scikit-learn
+lxml
+requests

@@ -148,7 +148,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.make_datastreams
-    image: mai25_cmlops_rakuten_make_datastream
+    image: mai25_cmlops_rakuten_make_datastreams
+    #mai25_cmlops_rakuten_make_datastreams
     volumes:
       - ./data:/app/data
       - ./src:/app/src

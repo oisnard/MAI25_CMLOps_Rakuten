@@ -3,13 +3,14 @@ import pandas as pd
 import src.tools.tools as tools 
 import src.models.models as models
 from src.models.metrics import SparseF1Score
+from src.tools.datastream_mngt import get_current_type_datastream
 import os 
 import logging 
 import mlflow
 
 
 
-def main():
+def main(pipeline_mode: str ='full'):
     logging.basicConfig(level=logging.INFO)
 
     logging.info("Available GPUs: %s", tf.config.list_physical_devices('GPU'))
@@ -82,9 +83,17 @@ def main():
                                           NUM_CLASSES=tools.NUM_CLASSES,
                                           nb_trainable_layers=nb_trainable_layers)
         weights_file = os.path.join(tools.MODEL_DIR, "merged_model.weights.h5")
-        if  os.path.exists(weights_file):
-            model.load_weights(os.path.join(tools.MODEL_DIR, "merged_model.weights.h5"))
-            logging.info("Model weights loaded successfully.")
+        if  'full' not in pipeline_mode and os.path.exists(weights_file):
+            if "stream" in get_current_type_datastream():
+                try:
+                    logging.info("Loading model weights from file for datastream mode...")
+                    model.load_weights(os.path.join(tools.MODEL_DIR, "merged_model.weights.h5"))
+                    logging.info("Model weights loaded successfully.")
+                except Exception as e:
+                    logging.error(f"Error loading model weights: {e}")
+                    raise e
+        # Compile the model
+        logging.info("Compiling the model...")
         model.compile(
             optimizer=tf.keras.optimizers.Adam(5e-5),
             loss=tf.keras.losses.SparseCategoricalCrossentropy(),
@@ -133,12 +142,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-else:
-    import inspect
-
-    # If this script is imported, run the main function only if it is called from train_model.py
-    stack = inspect.stack()
-    for frame in stack:
-        if "train_model_mlflow.py" in frame.filename:
-            main()
-            break    

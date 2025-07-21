@@ -8,10 +8,11 @@ import src.tools.tools as tools
 import src.models.models as models
 import src.models.metrics as metrics
 import mlflow 
+from src.tools.datastream_mngt import get_current_type_datastream
 
 
 
-def main():
+def main(pipeline_mode: str ='full'):
     logging.basicConfig(level=logging.INFO)
     logging.info("Training model based on images...")
     logging.info("Available GPUs: %s", tf.config.list_physical_devices('GPU'))
@@ -81,10 +82,15 @@ def main():
         logging.info("Model built successfully.")
 
         weights_file = os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5")
-        if os.path.exists(tools.MODEL_DIR):
-            model.load_weights(os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5"))
-            logging.info("Model weights loaded successfully.")
-
+        if 'full' not in pipeline_mode and os.path.exists(weights_file):
+            if "stream" in get_current_type_datastream():
+                try:
+                    logging.info("Loading model weights from file for datastream mode...")
+                    model.load_weights(os.path.join(tools.MODEL_DIR, "efficientNetB1_model.weights.h5"))
+                    logging.info("Model weights loaded successfully.")
+                except Exception as e:
+                    logging.error(f"Error loading model weights: {e}")
+                    raise e
 
         # Compile the model
         logging.info("Compiling the model...")
@@ -143,12 +149,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-else:
-    import inspect
-
-    # If this script is imported, run the main function only if it is called from train_model.py
-    stack = inspect.stack()
-    for frame in stack:
-        if "train_model_mlflow.py" in frame.filename:
-            main()
-            break    

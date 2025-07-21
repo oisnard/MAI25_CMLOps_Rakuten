@@ -104,7 +104,7 @@ with DAG(
         image='mai25_cmlops_rakuten_train:latest',
         api_version='auto',
         auto_remove=True,
-        command='python -m src.models.train_model_mlflow',
+        command='python -m src.models.train_model_mlflow --pipeline datastream',
         docker_url='unix://var/run/docker.sock',
         network_mode='bridge',
         mount_tmp_dir=False,

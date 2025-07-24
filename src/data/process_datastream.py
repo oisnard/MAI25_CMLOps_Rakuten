@@ -73,7 +73,7 @@ def process_next_datastream(X:pd.DataFrame, y:pd.DataFrame, baseline_stream:bool
     # Placeholder for processing logic
     logging.info(f"Processing datastream - Stream: {stream_name}, Shapes - X: {X.shape}, y: {y.shape}")
     # Process the raw data
-    X_processed = preprocessing.process_raw_data(X, train_data=not baseline_stream)
+    X_processed = preprocessing.process_raw_data(X, train_data=True)
     logging.info(f"Processed X DataFrame shape: {X_processed.shape}")
     # Process the target raw data   
     mapping_dict = tools.load_mapping_dict()

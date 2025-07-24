@@ -95,7 +95,7 @@ def main():
     if project is None:
         project = workspace.create_project(PROJECT_NAME)
         project.description = PROJECT_DESCRIPTION
-        workspace.save_project(project)
+        workspace.add_project(project)
 
     print(filepaths)
     filepath = filepaths[-1]

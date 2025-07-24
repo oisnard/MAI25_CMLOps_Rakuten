@@ -114,22 +114,27 @@ def build_features(X: pd.DataFrame,
 
     # Map the encoding function to the dataset
     # Use num_parallel_calls to speed up the mapping process
+    logging.info("Encoding text data...")
     encoded_ds = text_ds.map(encode_text_function, num_parallel_calls=tf.data.AUTOTUNE)
     # Batch and prefetch the dataset for performance
     encoded_ds = encoded_ds.batch(32).prefetch(tf.data.AUTOTUNE)
 
     attention_masks_len = []
     # Iterate through the encoded dataset to collect attention mask lengths
+    logging.info("Collecting attention mask lengths...")
     for batch in encoded_ds:
         inputs, lbls = batch
         attention_masks_len.extend(inputs['attention_mask'].numpy().sum(axis=1).tolist())
 
     # Add a DataFrame with the attention mask lengths
     X['nb_attention_mask'] = attention_masks_len
-
+    logging.info("Designation + description length added to DataFrame.")
     X['text_length'] = X['feature'].apply(len)
+    logging.info("Computation of RMS contrast...")
     X['RMS_contrast'] = X['image_path'].apply(compute_RMS_contrast)
+    logging.info("Computation of sharpness...")
     X['sharpness'] = X['image_path'].apply(compute_sharpness)
+    logging.info("Computation of normalized useful surface...")
     X['normalized_useful_surface'] = X['image_path'].apply(compute_normalized_useful_surface)
 
     dict_mapping_reverse = tools.load_reverse_mapping_dict()

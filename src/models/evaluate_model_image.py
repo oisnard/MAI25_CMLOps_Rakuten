@@ -137,6 +137,14 @@ def main():
     logging.info(f"Classification report saved to {report_path}")
     logging.info("Prediction process completed successfully.")
 
+    # Save the predictions to a CSV file
+    logging.info("Saving predictions to CSV file...")
+    predictions_df = pd.DataFrame({
+        'predicted_prdtypecode': y_pred_prdtypecode
+        }, 
+        index=X_test.index)
+    predictions_path = os.path.join(tools.DATA_PROCESSED_DIR, "predictions.csv")
+    predictions_df.to_csv(predictions_path, index=True)
     
     # Save the classification report to a JSON file
     logging.info("Saving classification report to JSON file...")

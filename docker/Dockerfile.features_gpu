@@ -1,0 +1,41 @@
+# Base CUDA officielle compatible CUDA 12.2 avec ptxas (développement complet)
+FROM nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+
+# Mode non interactif
+ENV DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /app
+
+# Variables d’environnement
+ENV PYTHONPATH=/app
+ENV TRANSFORMERS_CACHE=/app/.cache/huggingface
+ENV HF_HOME=/app/.cache/huggingface
+RUN mkdir -p $TRANSFORMERS_CACHE
+
+# Dépendances système
+RUN apt-get update && apt-get install -y \
+    python3.11 python3.11-venv python3.11-dev \
+    build-essential git curl \
+    libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+# Alias python3.11
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
+
+# Installer pip
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python
+
+# Mise à jour pip + installation des dépendances Python
+COPY docker/requirements.features_gpu.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --ignore-installed -r requirements.features_gpu.txt
+
+# Préchargement du modèle Transformers (évite erreurs runtime)
+RUN python -c "from transformers import CamembertTokenizer, TFCamembertModel; \
+               CamembertTokenizer.from_pretrained('almanach/camembert-base'); \
+               TFCamembertModel.from_pretrained('almanach/camembert-base')"
+
+# Copie des fichiers de config et du code source
+COPY .env /app/.env
+COPY params.yaml ./params.yaml
+COPY src/ /app/src/
+COPY setup.py .

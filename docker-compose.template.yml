@@ -211,6 +211,43 @@ services:
       - ./models:/app/models
       - ./src:/app/src
 
+  build_features:
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE_FEATURES}
+    image: mai25_cmlops_rakuten_features
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./models:/app/models
+      - ./mlruns:/app/mlruns
+
+  evidently_reports:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.evidently
+    image: mai25_cmlops_rakuten_evidently
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./monitoring:/app/monitoring
+
+  evidenty_server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.evidently
+    image: mai25_cmlops_rakuten_evidently_server
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./evidently_workspace:/app/evidently_workspace
+    command: >
+      bash -c "
+        evidently ui --workspace evidently_workspace --port 9000 --host 0.0.0.0
+      "
+    depends_on:
+      - evidently_reports
+
 volumes:
   postgres-db-volume:
   airflow_data:

@@ -109,3 +109,5 @@ target/
 /airflow/plugins/
 /airflow/dags/__pycache__/
 /airflow/dags/.airflowignore
+
+/evidently_workspace/

@@ -21,6 +21,9 @@ DATA_PROCESSED_DIR  = os.getenv("DATA_PROCESSED_DIR")
 DATA_RAW_STREAM_DIR = os.getenv("DATA_RAW_STREAM_DIR")  # Directory to save raw datastreams
 DATA_PROCESSED_STREAM_DIR = os.getenv("DATA_PROCESSED_STREAM_DIR")  # Directory to save processed datastreams
 
+DATA_MONITORING_SAMPLE_DIR = os.getenv("DATA_MONITORING_SAMPLE_DIR")  # Directory to save monitoring samples
+
+
 MODEL_DIR = os.getenv("MODEL_DIR")
 LOGS_DIR = os.getenv("LOGS_DIR")
 METRICS_DIR = os.getenv("METRICS_DIR")  # Directory to save classification reports

@@ -44,7 +44,7 @@ with DAG(
     start_date=days_ago(1),
     catchup=False,
     max_active_runs=1,
-    concurrency=1,
+    concurrency=2,
     tags=['rakuten', 'mlops', 'datascientest'],
 ) as dag:
 
@@ -118,7 +118,25 @@ with DAG(
             "USE_GPU": os.getenv('USE_GPU', 'false'),
         },
         **train_kwargs,
- )
+    )
+
+    # Etape 3b: build features
+    build_features = DockerOperator(
+        task_id='build_features_task',
+        image='mai25_cmlops_rakuten_features:latest',
+        api_version='auto',
+        auto_remove=True,
+        command='python -m src.features.build_features',
+        docker_url='unix://var/run/docker.sock',
+        network_mode='bridge',
+        mount_tmp_dir=False,
+        mounts=[
+            Mount(source=f"{BASE_DIR}/data", target='/app/data', type='bind'),
+            Mount(source=f"{BASE_DIR}/models", target='/app/models', type='bind'),
+            Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
+        ],
+    )
+
 
     # Étape 4 : Évaluation
     evaluate = DockerOperator(
@@ -136,7 +154,27 @@ with DAG(
             Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
         ],
         **train_kwargs,
-)
+    )   
+
+    # Étape '4b' : Generate Evidently Report
+    generate_evidently_report = DockerOperator(
+        task_id='generate_evidently_report_task',
+        image='mai25_cmlops_rakuten_evidently:latest',
+        api_version='auto',
+        auto_remove=True,
+        command='python -m monitoring.utils.generate_data_drift_report',
+        docker_url='unix://var/run/docker.sock',
+        network_mode='bridge',
+        mount_tmp_dir=False,
+        mounts=[
+            Mount(source=f"{BASE_DIR}/data", target='/app/data', type='bind'),
+            Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
+            Mount(source=f"{BASE_DIR}/monitoring", target='/app/monitoring', type='bind'),
+            Mount(source=f"{BASE_DIR}/evidently_workspace", target='/app/evidently_workspace', type='bind'),
+        ],
+    )
+
 
 
     data_loading >> make_datastream >> process_datastream >> train >> evaluate
+    process_datastream >> build_features >> generate_evidently_report

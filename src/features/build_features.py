@@ -8,6 +8,7 @@ from PIL import Image
 import cv2
 import logging 
 import os
+import shutil
 
 def compute_RMS_contrast(filepath: str) -> float:
     """
@@ -140,6 +141,8 @@ def build_features(X: pd.DataFrame,
 
     X['prdtypecode'] = y_prdtypecode
 
+    X = X.drop(columns=['feature', 'image_path'], errors='ignore')
+
     return X
 
 def current_datastream_name() -> str:
@@ -162,17 +165,44 @@ def current_datastream_name() -> str:
     if not X_files:
         logging.error("No X datastream files found in DATA_PROCESSED_STREAM_DIR.")
         raise FileNotFoundError("No X datastream files found in DATA_PROCESSED_STREAM_DIR.")
-    
-    stream_name = X_files[-1].split('_', 1)[1].rsplit('.', 1)[0]  # Extract the stream name from the first X file
+
+    stream_name = X_files[-1].split('_', 1)[1].rsplit('.', 1)[0]  # Extract the stream name from the last X file
 
     # Assuming the first file is the current datastream
     return stream_name
+
+def check_reset_need() -> bool:
+    """
+    Check if a reset is needed based on the content of folders DATA_RAW_STREAM_DIR and DATA_MONITORING_SAMPLE_DIR.
+    
+    Returns:
+        bool: True if a reset is needed, False otherwise.
+    """
+    if not os.path.exists(tools.DATA_RAW_STREAM_DIR):
+        if os.path.exists(tools.DATA_MONITORING_SAMPLE_DIR):
+            return True
+        return False
+    else:
+        if os.path.exists(tools.DATA_PROCESSED_STREAM_DIR):
+            X_files = sorted(f for f in os.listdir(tools.DATA_PROCESSED_STREAM_DIR) if f.startswith("X_") and f.endswith(".csv"))
+            if not X_files:
+                return True
+            if len(X_files) <= 1:
+                return True
+            return False
+
+
 
 def main():
     """
     Main function to load the dataset, build features, and save the processed DataFrame.
     """
     logging.basicConfig(level=logging.INFO)
+
+    if check_reset_need():
+        logging.info("Reset needed. Removing existing monitoring sample data.")
+        if os.path.exists(tools.DATA_MONITORING_SAMPLE_DIR):
+            shutil.rmtree(tools.DATA_MONITORING_SAMPLE_DIR)
 
     # Load parameters
     params = tools.load_dataset_params_from_yaml()
@@ -194,10 +224,18 @@ def main():
         X = pd.concat([X_train, X_val, X_test], axis=0)
         y = pd.concat([y_train, y_val, y_test], axis=0)
         df = build_features(X, y, MODEL_NAME)
+        if not os.path.exists(tools.DATA_MONITORING_SAMPLE_DIR):
+            os.makedirs(tools.DATA_MONITORING_SAMPLE_DIR, exist_ok=True)
+        if "reference" in datastream_name:
+            filename_sample = os.path.join(tools.DATA_MONITORING_SAMPLE_DIR, "reference_dataset.csv")
+        else:
+            filename_sample = os.path.join(tools.DATA_MONITORING_SAMPLE_DIR, f"{datastream_name}_dataset.csv")
+        print(tools.DATA_MONITORING_SAMPLE_DIR)
+        print(filename_sample)
         # Save the processed DataFrame
-        df.to_csv(os.path.join(tools.DATA_PROCESSED_DIR, "processed_train_dataset.csv"), index=True)
-        
-        logging.info("Features built and saved successfully.")
+        df.to_csv(filename_sample, index=True)
+
+        logging.info(f"Features built and saved successfully in file {filename_sample}.")
         
     except Exception as e:
         logging.error(f"An error occurred: {e}")

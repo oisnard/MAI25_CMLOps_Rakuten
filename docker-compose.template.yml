@@ -185,6 +185,7 @@ services:
       - ./data:/app/data
       - ./src:/app/src
       - ./models:/app/models
+      - ./metrics:/app/metrics
 
   mlflow:
     build:

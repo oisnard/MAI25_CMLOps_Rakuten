@@ -152,6 +152,7 @@ with DAG(
             Mount(source=f"{BASE_DIR}/data", target='/app/data', type='bind'),
             Mount(source=f"{BASE_DIR}/models", target='/app/models', type='bind'),
             Mount(source=f"{BASE_DIR}/src", target='/app/src', type='bind'),
+            Mount(source=f"{BASE_DIR}/metrics", target='/app/metrics', type='bind'),
         ],
         **train_kwargs,
     )   

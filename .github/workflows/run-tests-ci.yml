@@ -1,0 +1,27 @@
+name: Run Pytest on EC2
+
+on:
+  push:
+    tags:
+      - "run-tests-*"
+
+jobs:
+  run-tests-on-ec2:
+    name: SSH to EC2 and run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ec2_key
+          chmod 600 ec2_key
+
+      - name: Run tests on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.53.103.106 << 'EOF'
+            cd ~/mai25_CMLops/MAI25_CMLOps_Rakuten
+            docker compose exec -T api pytest tests/ --disable-warnings
+          EOF

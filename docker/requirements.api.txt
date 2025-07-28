@@ -16,3 +16,4 @@ sentencepiece==0.2.0
 pytest
 pillow
 opencv-python-headless
+lxml

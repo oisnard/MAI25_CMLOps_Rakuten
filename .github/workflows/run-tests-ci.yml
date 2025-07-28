@@ -22,6 +22,25 @@ jobs:
       - name: Run tests on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.53.103.106 << 'EOF'
+            set -e
             cd ~/mai25_CMLops/MAI25_CMLOps_Rakuten
-            docker compose exec -T api pytest tests/ --disable-warnings
+            echo "🔁 Starting containers..."
+            docker compose up -d
+
+            echo "⏳ Sleeping to allow services to start..."
+            sleep 10
+
+            echo "🔍 Status des services"
+            docker compose ps
+
+            echo "📜 Logs du service api (si planté)"
+            docker compose logs api || true
+
+            echo "✅ Running tests..."
+            docker compose exec -T api pytest tests/ --disable-warnings || {
+              echo '❌ Tests failed'; exit 1;
+            }
+
+            echo "🧹 Stopping containers..."
+            docker compose down
           EOF

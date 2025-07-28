@@ -208,9 +208,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./data/processed:/app/data/processed
+      - ./data:/app/data/
       - ./models:/app/models
       - ./src:/app/src
+      - ./tests:/app/tests
 
   build_features:
     build:

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/eb7ac1379bb94120947dc993e57f6c61/artifacts
+end_time: 1753434339600
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: eb7ac1379bb94120947dc993e57f6c61
+run_name: flawless-penguin-911
+run_uuid: eb7ac1379bb94120947dc993e57f6c61
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753434254163
+status: 3
+tags: []
+user_id: root

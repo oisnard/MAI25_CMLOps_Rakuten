@@ -8,8 +8,11 @@ python-dotenv
 pydantic
 PyJWT==2.8.0
 tensorflow==2.19.0
+httpx
 tf-keras
 transformers==4.52.0
 scikit-learn
 sentencepiece==0.2.0
 pytest
+pillow
+opencv-python-headless

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/c02d18f2d20149b6ac51007585ddc822/artifacts
+end_time: 1753370642376
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: c02d18f2d20149b6ac51007585ddc822
+run_name: tasteful-duck-883
+run_uuid: c02d18f2d20149b6ac51007585ddc822
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753370553874
+status: 3
+tags: []
+user_id: root

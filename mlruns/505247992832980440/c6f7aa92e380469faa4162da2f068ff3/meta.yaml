@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/c6f7aa92e380469faa4162da2f068ff3/artifacts
+end_time: 1753367456770
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: c6f7aa92e380469faa4162da2f068ff3
+run_name: hilarious-conch-794
+run_uuid: c6f7aa92e380469faa4162da2f068ff3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753367362175
+status: 3
+tags: []
+user_id: root

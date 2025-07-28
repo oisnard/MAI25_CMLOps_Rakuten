@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/8ab478daf7974685b9b9c395c5c000ce/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 8ab478daf7974685b9b9c395c5c000ce
+run_name: upbeat-gnat-226
+run_uuid: 8ab478daf7974685b9b9c395c5c000ce
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752399133940
+status: 1
+tags: []
+user_id: root

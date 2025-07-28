@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/88de3d191e3a41e491737c689775667d/artifacts
+end_time: 1752313453326
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 88de3d191e3a41e491737c689775667d
+run_name: painted-hare-278
+run_uuid: 88de3d191e3a41e491737c689775667d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752312924221
+status: 4
+tags: []
+user_id: root

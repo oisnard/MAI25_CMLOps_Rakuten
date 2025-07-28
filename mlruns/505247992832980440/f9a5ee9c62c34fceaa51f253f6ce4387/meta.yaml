@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/f9a5ee9c62c34fceaa51f253f6ce4387/artifacts
+end_time: 1753366898777
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: f9a5ee9c62c34fceaa51f253f6ce4387
+run_name: efficient-kit-151
+run_uuid: f9a5ee9c62c34fceaa51f253f6ce4387
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753366811510
+status: 3
+tags: []
+user_id: root

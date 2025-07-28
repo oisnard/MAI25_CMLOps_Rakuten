@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/d179fcb737e341bb8d3b893496171b8b/artifacts
+end_time: 1753433535948
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: d179fcb737e341bb8d3b893496171b8b
+run_name: righteous-snipe-128
+run_uuid: d179fcb737e341bb8d3b893496171b8b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753433440044
+status: 3
+tags: []
+user_id: root

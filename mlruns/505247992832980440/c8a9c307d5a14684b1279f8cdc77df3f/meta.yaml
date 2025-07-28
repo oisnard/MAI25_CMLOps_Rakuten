@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/c8a9c307d5a14684b1279f8cdc77df3f/artifacts
+end_time: 1752396289673
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: c8a9c307d5a14684b1279f8cdc77df3f
+run_name: peaceful-pug-866
+run_uuid: c8a9c307d5a14684b1279f8cdc77df3f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752395730271
+status: 3
+tags: []
+user_id: root

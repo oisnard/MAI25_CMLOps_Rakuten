@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/ec31909c7ff04ec2ba1fb7c666a11154/artifacts
+end_time: 1752401621503
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: ec31909c7ff04ec2ba1fb7c666a11154
+run_name: intelligent-cub-707
+run_uuid: ec31909c7ff04ec2ba1fb7c666a11154
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752401579577
+status: 4
+tags: []
+user_id: root

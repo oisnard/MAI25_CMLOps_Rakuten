@@ -1,0 +1,15 @@
+artifact_uri: file:///app/mlruns/367773840776312630/e9cde85f993c4e6b889019a13c4d7b7b/artifacts
+end_time: 1752506906583
+entry_point_name: ''
+experiment_id: '367773840776312630'
+lifecycle_stage: active
+run_id: e9cde85f993c4e6b889019a13c4d7b7b
+run_name: redolent-pug-512
+run_uuid: e9cde85f993c4e6b889019a13c4d7b7b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752506705717
+status: 3
+tags: []
+user_id: root

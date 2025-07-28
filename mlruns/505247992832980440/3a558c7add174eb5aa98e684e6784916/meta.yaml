@@ -1,0 +1,15 @@
+artifact_uri: file:///home/dransi/MAI25_CMLOps_Rakuten/mlruns/505247992832980440/3a558c7add174eb5aa98e684e6784916/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '505247992832980440'
+lifecycle_stage: active
+run_id: 3a558c7add174eb5aa98e684e6784916
+run_name: resilient-grouse-665
+run_uuid: 3a558c7add174eb5aa98e684e6784916
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752397839457
+status: 1
+tags: []
+user_id: root

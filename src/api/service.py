@@ -5,10 +5,13 @@ from src.models.predict_text import predict_text
 from src.models.predict_txt_img import predict_text_image
 from src.data.preprocessing import remove_all_html_tags
 from src.api.middleware import JWTAuthMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(title="Rakuten Product Prediction API",
               description="API for predicting product categories",
               version="1.0.0")
+
+Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(JWTAuthMiddleware)
 

@@ -17,3 +17,4 @@ pytest
 pillow
 opencv-python-headless
 lxml
+prometheus_fastapi_instrumentator

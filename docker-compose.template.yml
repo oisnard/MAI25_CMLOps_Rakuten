@@ -1,4 +1,19 @@
 services:
+  init-dataset:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dataloading
+    container_name: init-dataset
+    working_dir: /app/src/data
+    volumes:
+      - .:/app
+    command: python make_dataset.py
+    depends_on:
+      - postgres
+    restart: "no"
+    environment:
+      - PYTHONPATH=/app
+
   postgres:
     image: postgres:13
     environment:
@@ -58,6 +73,7 @@ services:
     restart: always
     depends_on:
       - airflow-webserver
+      - init-dataset
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -84,6 +100,7 @@ services:
     restart: always
     depends_on:
       - airflow-webserver
+      - init-dataset
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -110,6 +127,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - init-dataset
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -198,7 +216,8 @@ services:
       - ./mlruns:/app/mlruns
     environment:
       MLFLOW_TRACKING_URI: http://0.0.0.0:5000
-
+    depends_on:
+      - init-dataset
   api:
     build:
       context: .
@@ -212,6 +231,10 @@ services:
       - ./models:/app/models
       - ./src:/app/src
       - ./tests:/app/tests
+    networks:
+      - mai25
+    depends_on:
+      - init-dataset
 
   build_features:
     build:
@@ -234,7 +257,7 @@ services:
       - ./src:/app/src
       - ./monitoring:/app/monitoring
       - ./evidently_workspace:/app/evidently_workspace
-      
+
   evidenty_server:
     build:
       context: .
@@ -250,6 +273,31 @@ services:
       "
     depends_on:
       - evidently_reports
+      - init-dataset
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - mai25
+    depends_on:
+      - init-dataset
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - mai25
+    depends_on:
+      - prometheus
 
 volumes:
   postgres-db-volume:
@@ -259,3 +307,8 @@ volumes:
   data:
   models:
   mlruns:
+  grafana-storage:
+
+networks:
+  mai25:
+    driver: bridge

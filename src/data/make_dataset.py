@@ -1,5 +1,7 @@
 import pandas as pd 
 import os 
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import src.tools.tools as tools 
 import src.data.preprocessing as preprocessing
 from bs4 import BeautifulSoup
@@ -8,7 +10,7 @@ from sklearn.model_selection import train_test_split
 import logging
 import warnings
 
-
+PARAMS_PATH = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')), "params.yaml")
 
 # Function to get the starting line number for processing the dataset
 def get_start_line() -> int:
@@ -83,9 +85,25 @@ def get_dataset_from_ratio(X_train: pd.DataFrame,
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+   
+    # If all output files already exist, skip dataset generation
+    output_files = [
+        os.path.join(tools.DATA_PROCESSED_DIR, fname)
+        for fname in [
+            "X_train.csv", "X_val.csv", "X_test.csv",
+            "y_train.csv", "y_val.csv", "y_test.csv",
+            os.path.basename(tools.FILE_MAPPING_DICT)
+        ]
+    ]
+
+    if all(os.path.exists(f) for f in output_files):
+        logging.info("✅ Dataset files already exist. Skipping generation.")
+        exit(0)  # Exit gracefully without error
+
+    logging.info("🚧 Missing dataset files detected. Starting dataset generation...")
 
     # Load dataset parameters from YAML file
-    dataset_params = tools.load_dataset_params_from_yaml()
+    dataset_params = tools.load_dataset_params_from_yaml(PARAMS_PATH)
     logging.info(f"Dataset parameters loaded: {dataset_params}")
 
     # Process the  raw data file

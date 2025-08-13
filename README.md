@@ -33,7 +33,8 @@ Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier IS
 │   └── .gitignore           # Évite de traquer les gros fichiers localement
 │
 ├── docker/                   # Dockerfiles spécifiques à chaque étape
-│   ├── Dockerfile.airflow
+│   ├── prometheus.yml        # Configuration du service Prometheus
+|   ├── Dockerfile.airflow
 │   ├── Dockerfile.api
 │   ├── Dockerfile.dataloading
 │   ├── Dockerfile.evaluate
@@ -89,13 +90,15 @@ set -a && source .env && set +a && envsubst < docker-compose.template.yml > dock
 ```
 ---
 ### 🧰 Services
-| Service     | Port | Description                     |
-| ----------- | ---- | ------------------------------- |
-| Airflow UI  | 8080 | Orchestration du pipeline       |
-| MLflow      | 5000 | Tracking des expériences        |
-| API FastAPI | 8000 | Endpoint de prédiction          |
-| PostgreSQL  |      | Backend Airflow & MLflow        |
-| Redis       |      | Message broker Airflow (Celery) |
+| Service     | Port | Description                            |
+| ----------- | ---- | ---------------------------------------|
+| Airflow UI  | 8080 | Orchestration du pipeline              |
+| MLflow      | 5000 | Tracking des expériences               |
+| API FastAPI | 8000 | Endpoint de prédiction                 |
+| PostgreSQL  |      | Backend Airflow & MLflow               |
+| Redis       |      | Message broker Airflow (Celery)        |
+| Prometheus  | 9090 | Monitoring des métriques API           |
+| Grafana     | 3000 | Visualisation des métriques Prometheus |
 
 ---
 ### ▶️ Lancer l’environnement
@@ -155,6 +158,10 @@ set -a && source .env && set +a && envsubst < docker-compose.template.yml > dock
     docker compose up --build
     ```
     Airflow sera accessible sur localhost:8080, et MLflow sur localhost:5000.
+    Prometheus sera accessible sur http://localhost:9090
+    (Permet de visualiser les métriques exposées par l’API ou Airflow via /metrics)
+    Grafana sera accessible sur http://localhost:3000 (Identifiants par défaut : admin / admin)
+
 ---
 ### ⚙️ Pipelines Airflow
 
@@ -195,6 +202,52 @@ Les transformations sont suivies avec DVC pour permettre une versioning des data
 dvc repro
 dvc push
 ``` 
+
+---
+### 📊 Monitoring avec Prometheus et Grafana
+L’API FastAPI est instrumentée avec `prometheus_fastapi_instrumentator` pour exposer des métriques accessibles sur :
+
+```
+http://localhost:8000/metrics
+```
+
+🔎 Prometheus
+
+Prometheus collecte les métriques de l’API toutes les 15 secondes.
+Interface accessible via :
+
+```
+http://localhost:9090
+```
+
+Exemple de requête PromQL à exécuter dans l’interface :
+
+```
+sum by (handler) (http_requests_total)
+```
+
+Cela permet de visualiser le nombre total de requêtes par endpoint.
+
+
+📈 Grafana
+
+Grafana permet de créer des dashboards personnalisés à partir des données Prometheus.
+Accès à Grafana :
+
+```
+http://localhost:3000
+```
+
+Identifiants par défaut :
+	•	Login : admin
+	•	Mot de passe : admin
+
+Pour configurer :
+	1.	Aller dans “Connections > Data sources”.
+	2.	Cliquer sur “Add data source”.
+	3.	Sélectionner Prometheus.
+	4.	Renseigner l’URL : http://prometheus:9090.
+	5.	Créer des panels à partir de requêtes PromQL (ex: http_requests_total).
 
 ---
 ### ✅ Tests unitaires

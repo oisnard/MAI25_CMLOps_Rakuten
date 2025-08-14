@@ -21,7 +21,7 @@ jobs:
 
       - name: Run tests on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.53.103.106 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.51.150.171 << 'EOF'
             set -e
             cd ~/mai25_CMLops/MAI25_CMLOps_Rakuten
             echo "🔁 Starting containers..."

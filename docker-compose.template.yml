@@ -294,6 +294,9 @@ services:
       - "3000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./docker/grafana/provisionning/datasources:/etc/grafana/provisioning/datasources
+      - ./docker/grafana/provisionning/dashboard:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana/provisionning/dashboard:/var/lib/grafana/dashboards
     networks:
       - mai25
     depends_on:

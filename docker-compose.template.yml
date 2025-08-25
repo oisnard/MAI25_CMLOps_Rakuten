@@ -218,23 +218,24 @@ services:
       MLFLOW_TRACKING_URI: http://0.0.0.0:5000
     depends_on:
       - init-dataset
-  api:
-    build:
-      context: .
-      dockerfile: ${DOCKERFILE_API}
-      #docker/Dockerfile.api
-    image: mai25_cmlops_rakuten_api
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./data:/app/data/
-      - ./models:/app/models
-      - ./src:/app/src
-      - ./tests:/app/tests
-    networks:
-      - mai25
-    depends_on:
-      - init-dataset
+
+# api moved to k8s for better scalability
+#  api:
+#    build:
+#      context: .
+#      dockerfile: ${DOCKERFILE_API}
+#    image: mai25_cmlops_rakuten_api
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - ./data:/app/data/
+#      - ./models:/app/models
+#      - ./src:/app/src
+#      - ./tests:/app/tests
+#    networks:
+#      - mai25
+#    depends_on:
+#      - init-dataset
 
   build_features:
     build:
@@ -275,32 +276,33 @@ services:
       - evidently_reports
       - init-dataset
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    volumes:
-      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - mai25
-    depends_on:
-      - init-dataset
+# Prometheus & Grafana for monitoring (optional) --> moved to k8s for better scalability
+#  prometheus:
+#    image: prom/prometheus:latest
+#    container_name: prometheus
+#    volumes:
+#      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#    networks:
+#      - mai25
+#    depends_on:
+#      - init-dataset
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
-      - ./docker/grafana/provisionning/datasources:/etc/grafana/provisioning/datasources
-      - ./docker/grafana/provisionning/dashboard:/etc/grafana/provisioning/dashboards
-      - ./docker/grafana/provisionning/dashboard:/var/lib/grafana/dashboards
-    networks:
-      - mai25
-    depends_on:
-      - prometheus
+#  grafana:
+#    image: grafana/grafana:latest
+#    container_name: grafana
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - grafana-storage:/var/lib/grafana
+#      - ./docker/grafana/provisionning/datasources:/etc/grafana/provisioning/datasources
+#      - ./docker/grafana/provisionning/dashboard:/etc/grafana/provisioning/dashboards
+#      - ./docker/grafana/provisionning/dashboard:/var/lib/grafana/dashboards
+#    networks:
+#      - mai25
+#    depends_on:
+#      - prometheus
 
 volumes:
   postgres-db-volume:
@@ -310,7 +312,7 @@ volumes:
   data:
   models:
   mlruns:
-  grafana-storage:
+#  grafana-storage:
 
 networks:
   mai25:

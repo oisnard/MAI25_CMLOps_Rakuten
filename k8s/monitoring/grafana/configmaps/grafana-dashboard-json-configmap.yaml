@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-json
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  rakuten_api_dashboard.json: |
+    {
+      "id": null,
+      "uid": "rakuten-api-dashboard",
+      "title": "Rakuten API Dashboard",
+      "tags": ["api", "rakuten-api", "prometheus"],
+      "timezone": "browser",
+      "schemaVersion": 38,
+      "version": 2,
+      "refresh": "5s",
+      "panels": [
+        {
+          "type": "graph",
+          "title": "Total HTTP Requests",
+          "targets": [
+            {
+              "expr": "sum by (method, status) (http_requests_total{job=\"rakuten-api\"})",
+              "legendFormat": "{{method}} {{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+        },
+        {
+          "type": "graph",
+          "title": "Request Duration (seconds)",
+          "targets": [
+            {
+              "expr": "rate(http_request_duration_seconds_bucket{job=\"rakuten-api\"}[1m])",
+              "legendFormat": "{{le}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+        },
+        {
+          "type": "graph",
+          "title": "CPU Time (seconds)",
+          "targets": [
+            {
+              "expr": "rate(process_cpu_seconds_total{job=\"rakuten-api\"}[1m])",
+              "legendFormat": "CPU",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8}
+        },
+        {
+          "type": "stat",
+          "title": "Memory Usage (Resident)",
+          "targets": [
+            {
+              "expr": "process_resident_memory_bytes{job=\"rakuten-api\"}",
+              "legendFormat": "Memory",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 4, "x": 8, "y": 8}
+        },
+        {
+          "type": "graph",
+          "title": "GC Collections",
+          "targets": [
+            {
+              "expr": "rate(python_gc_collections_total{job=\"rakuten-api\"}[1m])",
+              "legendFormat": "Gen {{generation}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 4, "x": 12, "y": 8}
+        },
+        {
+          "type": "graph",
+          "title": "HTTP Requests per Second",
+          "targets": [
+            {
+              "expr": "rate(http_requests_total{job=\"rakuten-api\"}[1m])",
+              "legendFormat": "{{method}} {{status}}",
+              "refId": "A"
+            }
+          ],
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 16}
+        }
+      ],
+      "templating": {"list": []},
+      "annotations": {"list": []},
+      "time": {"from": "now-15m", "to": "now"}
+    }
+
+
+  rakuten_k8s_dashboard.json: |
+    {
+      "title": "Rakuten - K8s Monitoring",
+      "uid": "rakuten-k8s-dashboard",
+      "version": 1,
+      "description": "Dashboard Kubernetes - Pods, CPU, RAM",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Number of rakuten-api Pods",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "count(kube_pod_info{namespace=\"apps\", pod=~\"rakuten-api.*\"})",
+              "refId": "A"
+            }
+          ],
+          "gridPos": { "x": 0, "y": 0, "w": 8, "h": 5 }
+        },
+        {
+          "type": "timeseries",
+          "title": "CPU Usage (millicores)",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"apps\", pod=~\"rakuten-api.*\"}[1m])) * 1000",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "unit": "millicores"
+            },
+            "overrides": []
+          },
+          "gridPos": { "x": 0, "y": 5, "w": 24, "h": 10 }
+        },
+        {
+          "type": "timeseries",
+          "title": "Memory Usage (MiB)",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum by (pod) (container_memory_usage_bytes{namespace=\"apps\", pod=~\"rakuten-api.*\"}) / 1024 / 1024",
+              "refId": "C"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "unit": "mbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": { "x": 0, "y": 15, "w": 24, "h": 10 }
+        }
+      ]
+    }

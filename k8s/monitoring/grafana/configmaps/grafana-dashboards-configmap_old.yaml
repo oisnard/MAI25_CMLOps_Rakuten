@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  dashboard.yml: |
+{{ .Files.Get "k8s/monitoring/grafana/configmaps/dashboard.yml" | indent 4 }}

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rakuten-dashboard-json
+  namespace: monitoring
+data:
+  rakuten_dashboard.json: |
+{{ .Files.Get "k8s/monitoring/grafana/configmaps/rakuten_dashboard.json" | indent 4 }}

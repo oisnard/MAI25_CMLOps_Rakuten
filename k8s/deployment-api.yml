@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rakuten-api
+  namespace: apps
+  labels:
+    app: rakuten-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rakuten-api
+  template:
+    metadata:
+      labels:
+        app: rakuten-api
+    spec:
+      containers:
+        - name: rakuten-api
+          image: oisnard/mai25_cmlops_rakuten_api:latest
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: models-volume
+              mountPath: /app/models
+            - name: data-volume
+              mountPath: /app/data
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "1.5Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+      volumes:
+        - name: models-volume
+          persistentVolumeClaim:
+            claimName: pvc-models
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: pvc-data

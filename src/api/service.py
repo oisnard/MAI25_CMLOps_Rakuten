@@ -107,4 +107,12 @@ async def predict_text_list(request: TextRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Health and Readiness Endpoints
+@app.get("/health", summary="Health check endpoint")
+def health_check():
+    return {"status": "ok"}
 
+# Readiness Check
+@app.get("/ready", summary="Readiness check endpoint")
+def readiness_check():
+    return {"status": "ready"}

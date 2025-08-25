@@ -1,0 +1,128 @@
+{
+  "id": null,
+  "uid": "rakuten-api-dashboard",
+  "title": "Rakuten API Dashboard",
+  "tags": [
+    "api",
+    "rakuten-api",
+    "prometheus"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 2,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Total HTTP Requests",
+      "targets": [
+        {
+          "expr": "sum by (method, status) (http_requests_total{job=\"rakuten-api\"})",
+          "legendFormat": "{{method}} {{status}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Request Duration (seconds)",
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_bucket{job=\"rakuten-api\"}[1m])",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      }
+    },
+    {
+      "type": "graph",
+      "title": "CPU Time (seconds)",
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"rakuten-api\"}[1m])",
+          "legendFormat": "CPU",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Memory Usage (Resident)",
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"rakuten-api\"}",
+          "legendFormat": "Memory",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 8,
+        "y": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "GC Collections",
+      "targets": [
+        {
+          "expr": "rate(python_gc_collections_total{job=\"rakuten-api\"}[1m])",
+          "legendFormat": "Gen {{generation}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 12,
+        "y": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "HTTP Requests per Second",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{job=\"rakuten-api\"}[1m])",
+          "legendFormat": "{{method}} {{status}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      }
+    }
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  }
+}

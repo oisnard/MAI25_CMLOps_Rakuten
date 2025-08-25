@@ -1,0 +1,32 @@
+# To get the list of apps pods: 
+kubectl get pods -n apps
+
+# To remove one of the pods: 
+kubectl delete pod rakuten-api-7d8955b9bf-xxxxx -n apps
+
+# To scale down the nb of replicas: 
+kubectl scale deployment rakuten-api --replicas=1 -n apps
+
+
+kubectl get pods -n apps
+kubectl get pods -n monitoring
+
+kubectl get svc -n apps
+kubectl get svc -n monitoring
+
+# Inspect logs
+kubectl logs -n apps -l app=rakuten-api
+
+# inpect logs of a specific pod:
+kubectl logs -n apps rakuten-api-xxxxx
+
+# Check target state in prometheus: 
+kubectl port-forward svc/prometheus -n monitoring 9090:9090
+and check http://localhost:9090/targets 
+
+# Check configmaps and their contents
+kubectl get configmaps -n monitoring
+kubectl describe configmap grafana-dashboard-json -n monitoring
+
+# To follow autoscaling
+kubectl get hpa -n apps --watch

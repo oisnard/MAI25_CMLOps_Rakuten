@@ -306,3 +306,45 @@ def load_full_datasets() -> tuple:
         logging.error("The 'image_path' column contains null values.")
         raise ValueError("The 'image_path' column contains null values.")
     return X_train, X_val, y_train, y_val, X_test, y_test
+
+
+def load_test_datasets() -> tuple:
+    """
+    Function to load the test dataset.
+    Returns:
+        X_test, y_test : DataFrames containing the test data.
+    """
+    try:
+        X_test = pd.read_csv(os.path.join(DATA_PROCESSED_DIR, "X_test.csv"), index_col=0)
+        y_test = pd.read_csv(os.path.join(DATA_PROCESSED_DIR, "y_test.csv"), index_col=0)
+    except FileNotFoundError as e:
+        logging.error(f"File not found: {e}")
+        raise
+    except Exception as e:
+        logging.error(f"An error occurred while loading datasets: {e}")
+        raise
+    # Ensure that the datasets are not empty
+    if X_test.empty or y_test.empty:
+        logging.error("One or more datasets are empty.")
+        raise ValueError("One or more datasets are empty.")
+    # Ensure that the indices of X_test and y_test match
+    if not X_test.index.equals(y_test.index):
+        logging.error("Indices of X_test and y_test do not match.")
+        raise ValueError("Indices of X_test and y_test do not match.")
+    # Ensure that the 'feature' column exists in X_test
+    if 'image_path' not in X_test.columns:
+        logging.error("The 'image_path' column is missing in the test dataset.")
+        raise ValueError("The 'image_path' column is missing in the test dataset.")
+    # Ensure that the 'prdtypecode' column exists in y_test
+    if 'prdtypecode' not in y_test.columns:
+        logging.error("The 'prdtypecode' column is missing in the test label dataset.")
+        raise ValueError("The 'prdtypecode' column is missing in the test label dataset.")
+    # Ensure that the 'prdtypecode' column is of integer type
+    if not pd.api.types.is_integer_dtype(y_test['prdtypecode']):
+        logging.error("The 'prdtypecode' column must be of integer type.")
+        raise ValueError("The 'prdtypecode' column must be of integer type.")
+    # Ensure that the 'image_path' column is of string type
+    if not pd.api.types.is_string_dtype(X_test['image_path']):
+        logging.error("The 'image_path' column must be of string type.")
+        raise ValueError("The 'image_path' column must be of string type.")
+    # Ensure that the 'prdtypecode'

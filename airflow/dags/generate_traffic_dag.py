@@ -42,8 +42,8 @@ with DAG(
         docker_url='unix://var/run/docker.sock',  # accès local au Docker daemon
         network_mode='host',  # ou 'host' si nécessaire
         environment={
-            #"INGRESS_IP": "http://192.168.1.35",
-            "INGRESS_IP": "http://172.31.39.207",
+            "INGRESS_IP": "http://192.168.1.35",
+            #"INGRESS_IP": "http://172.31.39.207",
             #
         },
         mount_tmp_dir=False,

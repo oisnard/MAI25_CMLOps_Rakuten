@@ -24,3 +24,34 @@ fi
 
 # Générer le docker-compose.yml
 envsubst < docker-compose.template.yml > docker-compose.yml
+
+
+# Lire dynamiquement le GID de l'utilisateur courant
+USER_GID=$(id -g)
+
+# Paramètre pour activer le service API
+WITH_API=false
+if [ "$1" == "--with-api" ]; then
+  WITH_API=true
+fi
+
+# Substitution du GID
+sed -i "s/{USER_GID}/$USER_GID/g" docker-compose.yml
+
+if $WITH_API; then
+  echo "Activation du service 'api' et désactivation de 'traffic-generator'..."
+
+  # Décommente le bloc 'api'
+  sed -i '/^[[:space:]]*#.*api:/,/^[[:space:]]*[^#[:space:]]/ s/^[[:space:]]*#//' docker-compose.yml
+
+  # Commente le bloc 'traffic-generator'
+  awk '
+    BEGIN {in_block=0}
+    /^[[:space:]]*traffic-generator:/ {in_block=1}
+    in_block && /^[^[:space:]#]/ && !/^traffic-generator:/ {in_block=0}
+    in_block {print "#" $0; next}
+    {print $0}
+  ' docker-compose.yml > tmp && mv tmp docker-compose.yml
+fi
+
+echo "Fichier docker-compose.yml généré avec succès."

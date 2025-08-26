@@ -16,4 +16,17 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 80
+        averageUtilization: 70
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 15  # 🔼 Attente avant montée (si transitoire)
+      policies:
+        - type: Percent
+          value: 100  # ➕ Peut doubler le nombre de pods
+          periodSeconds: 30
+    scaleDown:
+      stabilizationWindowSeconds: 30  # 🔽 Attente de 30s avant descente
+      policies:
+        - type: Percent
+          value: 50  # ➖ Peut réduire de moitié les pods
+          periodSeconds: 30

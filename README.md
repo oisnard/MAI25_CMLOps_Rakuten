@@ -269,6 +269,15 @@ Assure-toi d’avoir installé pytest (via pip install pytest ou via un requirem
 python -m pytest
 ```
 
+### Setup pour k8s
+configurer le Makefile sur son registry et son login associé (par exemple docker.io et oisnard)
+make login
+make push-all
+./scripts/k8s_tools.sh
+./setup_local_k8s.sh
+./appy_k8s_resources.sh
+
+
 ---
 ### 📝 Auteurs
 

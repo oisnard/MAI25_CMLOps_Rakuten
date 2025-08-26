@@ -15,21 +15,27 @@ logger = logging.getLogger(__name__)
 token = create_jwt_token("test_user")
 
 # 🔁 Retrieve IP Ingress automatically through kubectl
-def get_ingress_ip():
-    try:
-        result = subprocess.run(
-            ["kubectl", "get", "ingress", "rakuten-api", "-n", "apps", "-o", "jsonpath={.status.loadBalancer.ingress[0].ip}"],
-            capture_output=True, text=True, check=True
-        )
-        ip = result.stdout.strip()
-        if ip:
-            return f"http://{ip}"
-        else:
-            raise RuntimeError("❌ Aucune IP d'Ingress disponible.")
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"❌ Erreur récupération IP Ingress : {e}")
+#def get_ingress_ip():
+#    try:
+#        result = subprocess.run(
+#            ["kubectl", "get", "ingress", "rakuten-api", "-n", "apps", "-o", "jsonpath={.status.loadBalancer.ingress[0].ip}"],
+#            capture_output=True, text=True, check=True
+#        )
+#        ip = result.stdout.strip()
+#        if ip:
+#            return f"http://{ip}"
+#        else:
+#            raise RuntimeError("❌ Aucune IP d'Ingress disponible.")
+#    except subprocess.CalledProcessError as e:
+#        raise RuntimeError(f"❌ Erreur récupération IP Ingress : {e}")
+# 🌐 Récupérer l'adresse d'Ingress via une variable d'environnement
+INGRESS_IP = os.getenv("INGRESS_IP")
+if not INGRESS_IP:
+    raise RuntimeError("❌ Variable d’environnement INGRESS_IP manquante.")
 
-API_URL = f"{get_ingress_ip()}/predict_product_batch"
+logging.info(f"📡 L’IP d’Ingress utilisée est : {INGRESS_IP}")
+
+API_URL = f"{INGRESS_IP}/predict_product_batch"
 HEADERS = {
     "Authorization": f"Bearer {token}",
     "Content-Type": "application/json"

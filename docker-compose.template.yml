@@ -7,6 +7,7 @@ services:
     working_dir: /app/src/data
     volumes:
       - .:/app
+      - ./data:/opt/airflow/data
     command: python make_dataset.py
     depends_on:
       - postgres
@@ -303,6 +304,22 @@ services:
 #      - mai25
 #    depends_on:
 #      - prometheus
+
+  traffic-generator:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.traffic_generator  # Nom du Dockerfile si ce n'est pas le nom par défaut
+    image: rakuten-traffic-gen
+    container_name: traffic-generator
+    volumes:
+#      - /etc/rancher/k3s/k3s.yaml:/root/.kube/config:ro  # Pour accéder à K3s depuis le container
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./.env:/app/.env:ro
+    environment:
+      - INGRESS_IP=http://192.168.1.35
+#      - KUBECONFIG=/root/.kube/config
+    restart: "no"
 
 volumes:
   postgres-db-volume:

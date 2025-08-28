@@ -29,7 +29,7 @@ envsubst < docker-compose.template.yml > docker-compose.yml
 # Lire dynamiquement le GID de l'utilisateur courant
 USER_GID=$(id -g)
 
-# Paramètre pour activer le service API
+# Paramètre pour lancer le service API
 WITH_API=false
 if [ "$1" == "--with-api" ]; then
   WITH_API=true
@@ -41,8 +41,9 @@ sed -i "s/{USER_GID}/$USER_GID/g" docker-compose.yml
 if $WITH_API; then
   echo "Activation du service 'api' et désactivation de 'traffic-generator'..."
 
-  # Décommente le bloc 'api'
-  sed -i '/^[[:space:]]*#.*api:/,/^[[:space:]]*[^#[:space:]]/ s/^[[:space:]]*#//' docker-compose.yml
+  echo "Activation de l'API : on commente 'profiles: [\"buildonly\"]'"
+  sed -i '/^[[:space:]]*profiles: \["buildonly"\]/ s/^/#/' docker-compose.yml
+
 
   # Commente le bloc 'traffic-generator'
   awk '

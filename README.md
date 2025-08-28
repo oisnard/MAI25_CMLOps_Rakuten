@@ -2,7 +2,7 @@ MAI25_CMLOPS : project Rakuten
 ==============================
 
 Projet pédagogique réalisé dans le cadre de la formation MLOps de DataScientest (Cohorte MAI 2025), axé sur la mise en place d’une architecture MLOps complète pour le traitement et la classification de données produits Rakuten dans le cadre du challenge ens-data : https://challengedata.ens.fr/participants/challenges/35/ .
-Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier ISNARD / Julien TREVISAN / Loïc RAMAYE lors de leur formation Data Scientist (cohorte Juin 2025) et qui avaient permis d'obtenir la première place au classement public et privé du challenge.
+Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier ISNARD / Julien TREVISAN / Loïc RAMAYE lors de leur formation Data Scientist (cohorte Juin 2025) et qui avaient permis d'obtenir la première place au classement public et privé du challenge. Dans le cadre de ce projet, des modèles plus légers ont été mises en place afin de réduire les coûts d'instance AWS (déploiement sur instance EC2 avec GPU).
 
 
 ---
@@ -15,6 +15,10 @@ Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier IS
 - Fournir une API de prédiction REST sécurisée.
 - Suivre les versions de données avec DVC
 - Tests unitaires
+
+---
+## 🧭 Schéma d’Architecture MLOps simplifié
+![alt text](/data/dataviz/schema_archi.png)
 
 ---
 ## 📁 Structure du dépôt
@@ -269,14 +273,25 @@ Assure-toi d’avoir installé pytest (via pip install pytest ou via un requirem
 python -m pytest
 ```
 
-### Setup pour k8s
-configurer le Makefile sur son registry et son login associé (par exemple docker.io et oisnard)
-make login
-make push-all
-./scripts/k8s_tools.sh
-./setup_local_k8s.sh
-./appy_k8s_resources.sh
+### Installation k3s
+Lancer le script :
+```
+./scripts/install_k3s.sh
+```
 
+### Déployer l'api sur k3s et le monitoring
+Lancer les scripts
+```
+./scripts/deploy_k3s.sh
+./scripts/deploy_monitoring.sh
+```
+
+### Nettoyer les ressources k3s (namespace, pv/pvc, pods)
+Lancer les scripts
+```
+./scripts/cleanup_monitoring.sh
+./scripts/cleanup_k3s.sh
+```
 
 ---
 ### 📝 Auteurs
@@ -284,4 +299,4 @@ make push-all
 - Olivier ISNARD
 - Christian SEGNOU
 
-Encadré dans le cadre de la formation MLOps par Maria de DataScientest.
+Encadrés dans le cadre de la formation MLOps par Maria de DataScientest.

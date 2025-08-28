@@ -220,23 +220,25 @@ services:
     depends_on:
       - init-dataset
 
-# api moved to k8s for better scalability
-#  api:
-#    build:
-#      context: .
-#      dockerfile: ${DOCKERFILE_API}
-#    image: mai25_cmlops_rakuten_api
-#    ports:
-#      - "8000:8000"
-#    volumes:
-#      - ./data:/app/data/
-#      - ./models:/app/models
-#      - ./src:/app/src
-#      - ./tests:/app/tests
-#    networks:
-#      - mai25
-#    depends_on:
-#      - init-dataset
+# api execuation moved to k8s for better scalability
+  api:
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE_API}
+    image: mai25_cmlops_rakuten_api
+    profiles: ["buildonly"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data/
+      - ./models:/app/models
+      - ./src:/app/src
+      - ./tests:/app/tests
+    networks:
+      - mai25
+    depends_on:
+      - init-dataset
+
 
   build_features:
     build:

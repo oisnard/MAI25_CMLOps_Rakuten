@@ -20,6 +20,14 @@ spec:
           image: oisnard/mai25_cmlops_rakuten_api:latest
           ports:
             - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 5
           volumeMounts:
             - name: models-volume
               mountPath: /app/models

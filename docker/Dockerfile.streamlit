@@ -1,0 +1,27 @@
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+WORKDIR /app
+
+# Installer outils de base (optionnel, utile pour certaines lib python)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier uniquement les requirements
+COPY docker/requirements.streamlit.txt .
+
+#COPY .env .env
+#COPY params.yaml ./
+
+# Installer les dépendances
+RUN pip install --no-cache-dir -r requirements.streamlit.txt
+
+# Exposer le port Streamlit
+EXPOSE 8501
+
+# Commande de lancement
+CMD ["streamlit", "run", "src/streamlit/rakuten_app.py"]

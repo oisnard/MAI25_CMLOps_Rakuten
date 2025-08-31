@@ -323,6 +323,20 @@ services:
 #      - KUBECONFIG=/root/.kube/config
     restart: "no"
 
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.streamlit
+    image: mai25_cmlops_rakuten_streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./.env:/app/.env:ro
+      - ./params.yaml:/app/params.yaml:ro
+
 volumes:
   postgres-db-volume:
   airflow_data:

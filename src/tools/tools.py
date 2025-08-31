@@ -23,6 +23,7 @@ DATA_PROCESSED_STREAM_DIR = os.getenv("DATA_PROCESSED_STREAM_DIR")  # Directory 
 
 DATA_MONITORING_SAMPLE_DIR = os.getenv("DATA_MONITORING_SAMPLE_DIR")  # Directory to save monitoring samples
 
+DATA_VIZ_DIR = os.getenv("DATA_VIZ_DIR")  # Directory to save visualization assets
 
 MODEL_DIR = os.getenv("MODEL_DIR")
 LOGS_DIR = os.getenv("LOGS_DIR")
@@ -348,3 +349,4 @@ def load_test_datasets() -> tuple:
         logging.error("The 'image_path' column must be of string type.")
         raise ValueError("The 'image_path' column must be of string type.")
     # Ensure that the 'prdtypecode'
+    return X_test, y_test

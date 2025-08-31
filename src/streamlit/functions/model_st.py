@@ -53,7 +53,7 @@ def best_model(x_train, df_cat):
         Le préprocessing retenu et donnant les meilleures performances de F1-score est le suivant :
         - **Texte** : remplacement des NaNs, suppression HTML avec [BeautifulSoup](https://pypi.org/project/beautifulsoup4/),  
           concaténation désignation + description.  
-        - **Images** : resize **500x500** + `tf.keras.applications.convnext.preprocess_input`.
+        - **Images** : taille conservée à **500x500** + `tf.keras.applications.convnext.preprocess_input`.
         """)
 
     with st.expander("🔑 Tokenisation des données textuelles", expanded=False):
@@ -161,9 +161,9 @@ def retained_models(x_train, df_cat):
     st.warning("""
     ⚙️ **Contraintes de mise en production** :  
     - L’exploitation de modèles lourds comme **CamemBERT** nécessite une **GPU**.  
-    - Le projet utilise une **EC2 AWS**, ce qui engendre des **coûts d’usage**.  
+    - Le projet utilise une **EC2 AWS** (ec2-g4dn-xlarge), ce qui engendre des **coûts d’usage**.  
     - Les modèles retenus sont volontairement **dimensionnés plus modestement**  
-      afin de limiter les coûts et assurer la faisabilité en production.
+      afin de limiter les coûts AWS.
     """)
 
     st.markdown("### ✅ Modèles")

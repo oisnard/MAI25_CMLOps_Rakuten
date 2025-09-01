@@ -1,0 +1,49 @@
+name: Run Pytest on EC2
+
+on:
+  push:
+    tags:
+      - "run-tests-*"
+
+jobs:
+  run-tests-on-ec2:
+    name: SSH to EC2 and run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ec2_key
+          chmod 600 ec2_key
+
+      
+        run: |
+          echo "🔎 Connexion à l’instance __EC2_NAME__ (__EC2_IP__)"
+          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@__EC2_IP__ << 'EOF'
+            set -e
+            cd ~/mai25_CMLops/MAI25_CMLOps_Rakuten
+            docker compose down
+            ./generate_compose.sh --with-api
+            echo "🔁 Starting containers..."
+            docker compose up -d
+
+            echo "⏳ Sleeping to allow services to start..."
+            sleep 10
+
+            echo "🔍 Status des services"
+            docker compose ps
+
+            echo "📜 Logs du service api (si planté)"
+            docker compose logs api || true
+
+            echo "✅ Running tests..."
+            docker compose exec -T api pytest tests/ --disable-warnings || {
+              echo '❌ Tests failed'; exit 1;
+            }
+
+            echo "🧹 Stopping containers..."
+            docker compose down
+          EOF

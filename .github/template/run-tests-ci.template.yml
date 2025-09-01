@@ -19,7 +19,7 @@ jobs:
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ec2_key
           chmod 600 ec2_key
 
-      
+      - name: Run tests on EC2
         run: |
           echo "🔎 Connexion à l’instance __EC2_NAME__ (__EC2_IP__)"
           ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@__EC2_IP__ << 'EOF'

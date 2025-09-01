@@ -19,11 +19,13 @@ jobs:
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ec2_key
           chmod 600 ec2_key
 
-      
+      - name: Run tests on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.51.150.171 << 'EOF'
+          echo "🔎 Connexion à l’instance ec2-g4dn-xlarge (13.61.175.197)"
+          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.61.175.197 << 'EOF'
             set -e
             cd ~/mai25_CMLops/MAI25_CMLOps_Rakuten
+            docker compose down
             ./generate_compose.sh --with-api
             echo "🔁 Starting containers..."
             docker compose up -d

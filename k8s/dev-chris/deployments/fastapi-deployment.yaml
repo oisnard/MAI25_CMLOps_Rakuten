@@ -71,6 +71,9 @@ spec:
         - name: app-config             # Mount configuration volume
           mountPath: /app/config       # Path in container
           readOnly: true               # Read-only access
+        - name: data-volume            # NEW: Data volume mount
+          mountPath: /app/data
+          readOnly: true
         
         # Security Context
         securityContext:
@@ -83,6 +86,9 @@ spec:
       - name: app-config               # Volume name
         configMap:                     # Use ConfigMap for configuration
           name: fastapi-config-dev-chris  # ConfigMap name
+      - name: data-volume            # NEW: Data volume
+        persistentVolumeClaim:
+          claimName: data-pvc-dev-chris
       
       # Restart Policy
       restartPolicy: Always            # Always restart failed pods

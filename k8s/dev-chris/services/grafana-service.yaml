@@ -5,39 +5,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: grafana-service-dev-chris          # Service name for Grafana access
-  namespace: dev-chris                     # Deploy in your namespace
+  name: grafana-service-dev-chris
+  namespace: dev-chris
   labels:
-    app: grafana-dev-chris                 # App label for organization
-    component: monitoring                  # Component type
-    service: monitoring                    # Service type label
+    app: grafana-dev-chris
+    branch: dev-chris
 spec:
-  type: ClusterIP                          # Service type: internal cluster access
-  # ClusterIP provides internal access within the cluster
-  # Grafana can be accessed from other services in the cluster
-  
+  type: ClusterIP
   ports:
-  - port: 3000                             # Port the service listens on
-    targetPort: 3000                       # Port to forward to Grafana pods
-    protocol: TCP                          # Protocol type
-    name: http                             # Port name for identification
-  
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
   selector:
-    app: grafana-dev-chris                 # Select Grafana pods
-    # This selector tells Kubernetes which pods to send traffic to
-    # Must match the labels in your Grafana deployment
-  
-  # Session Affinity (not needed for monitoring)
-  sessionAffinity: None                    # No session affinity needed
-  
-  # Load Balancing
-  loadBalancerSourceRanges: []            # Allow all source IPs
-  
-  # Health Check
-  healthCheckNodePort: 0                  # Not used for ClusterIP services
-  
-  # Additional Metadata for Monitoring
-  annotations:
-    # Custom annotations for monitoring tools
-    prometheus.io/scrape: "false"          # Don't scrape Grafana metrics
-    # Grafana metrics are not needed for basic monitoring setup
+    app: grafana-dev-chris

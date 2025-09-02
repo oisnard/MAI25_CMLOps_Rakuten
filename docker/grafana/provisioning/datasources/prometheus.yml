@@ -1,0 +1,17 @@
+# Grafana Data Source Configuration for Prometheus
+# This file automatically configures Prometheus as a data source when Grafana starts
+# No manual setup required in the Grafana web interface
+
+apiVersion: 1  # Configuration file version for Grafana provisioning
+
+datasources:
+  - name: Prometheus                    # Name Grafana will use for this data source
+    type: prometheus                    # Type of data source (Prometheus)
+    access: proxy                       # Grafana will proxy requests to Prometheus (more secure)
+    url: http://prometheus:9090        # Internal Docker network address (container name:port)
+    isDefault: true                     # Make this the default data source for all dashboards
+    editable: true                      # Allow editing this data source in Grafana UI if needed
+    jsonData:                          # Additional Prometheus-specific configuration
+      timeInterval: "15s"              # How often Grafana queries Prometheus for data
+      queryTimeout: "60s"              # Maximum time to wait for Prometheus query response
+      httpMethod: "POST"               # HTTP method for sending queries to Prometheus 

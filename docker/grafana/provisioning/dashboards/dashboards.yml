@@ -1,0 +1,16 @@
+# Grafana Dashboard Provisioning Configuration
+# This file tells Grafana where to find and how to load dashboard JSON files automatically
+# No manual dashboard import required - dashboards appear automatically when Grafana starts
+
+apiVersion: 1  # Configuration file version for Grafana provisioning
+
+providers:  # Dashboard providers configuration - tells Grafana how to load dashboards
+  - name: 'default'                     # Name of this dashboard provider (can have multiple)
+    orgId: 1                            # Organization ID (1 = default organization)
+    folder: ''                          # Empty = load dashboards in root folder (no subfolder)
+    type: file                          # Load dashboards from JSON files (not from database)
+    disableDeletion: false              # Allow deleting dashboards from Grafana UI if needed
+    updateIntervalSeconds: 10           # Check for new dashboard files every 10 seconds
+    allowUiUpdates: true                # Allow editing dashboards in Grafana UI after loading
+    options:
+      path: /etc/grafana/provisioning/dashboards  # Container path where dashboard JSON files are stored 

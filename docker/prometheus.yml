@@ -1,8 +1,28 @@
+# Prometheus Configuration File
+# This file tells Prometheus what services to monitor and how often to collect metrics
+# Prometheus will automatically start scraping these targets when the container starts
+
 global:
-  scrape_interval: 15s
+  scrape_interval: 15s                # Default interval to collect metrics from all targets (15 seconds)
+  evaluation_interval: 15s            # How often to evaluate alerting rules (15 seconds)
 
 scrape_configs:
-  - job_name: 'fastapi'
+  # Job 1: Monitor your FastAPI application
+  - job_name: 'fastapi'               # Name for this monitoring job (appears in Prometheus UI)
     static_configs:
-      - targets: ['mai25_cmlops_rakuten_dev_chris-api-1:8000']
+      - targets: ['api:8000']         # Target your FastAPI container using Docker network name
+    metrics_path: /metrics            # Endpoint where your FastAPI app exposes Prometheus metrics
+    scrape_interval: 5s               # Collect API metrics every 5 seconds (more frequent for API)
+
+  # Job 2: Monitor Airflow webserver
+  - job_name: 'airflow-webserver'     # Name for Airflow monitoring job
+    static_configs:
+      - targets: ['airflow-webserver:8080']  # Target Airflow container on port 8080
+    metrics_path: /metrics            # Airflow metrics endpoint (if available)
+    scrape_interval: 15s              # Collect Airflow metrics every 15 seconds
+
+  # Job 3: Self-monitor Prometheus
+  - job_name: 'prometheus'            # Monitor Prometheus itself for health
+    static_configs:
+      - targets: ['localhost:9090']   # Target Prometheus on its own port
 

@@ -6,6 +6,8 @@ from src.models.predict_txt_img import predict_text_image
 from src.data.preprocessing import remove_all_html_tags
 from src.api.middleware import JWTAuthMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
+from datetime import datetime
+import os
 
 app = FastAPI(title="Rakuten Product Prediction API",
               description="API for predicting product categories",
@@ -106,5 +108,59 @@ async def predict_text_list(request: TextRequest):
         return {"predicted prdtypecodes": predictions}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    """
+    Health check endpoint for Kubernetes probes
+    Returns application status and basic system info
+    """
+    try:
+        # Check if data files are accessible
+        data_path = "/app/data/processed/mapping_dict.json"
+        data_accessible = os.path.exists(data_path)
+        
+        # Check if models are loaded
+        models_loaded = True  # You can add actual model checks here
+        
+        return {
+            "status": "healthy" if data_accessible and models_loaded else "degraded",
+            "timestamp": datetime.now().isoformat(),
+            "data_accessible": data_accessible,
+            "models_loaded": models_loaded,
+            "environment": os.getenv("ENVIRONMENT", "unknown"),
+            "version": "v1"
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e),
+            "environment": os.getenv("ENVIRONMENT", "unknown")
+        }
+
+@app.get("/health/ready")
+async def readiness_check():
+    """
+    Readiness probe endpoint
+    Checks if the application is ready to serve requests
+    """
+    try:
+        # Check critical dependencies
+        data_path = "/app/data/processed/mapping_dict.json"
+        if not os.path.exists(data_path):
+            return {"status": "not_ready", "reason": "Data files not accessible"}
+        
+        return {"status": "ready", "timestamp": datetime.now().isoformat()}
+    except Exception as e:
+        return {"status": "not_ready", "reason": str(e)}
+
+@app.get("/health/live")
+async def liveness_check():
+    """
+    Liveness probe endpoint
+    Checks if the application is alive and responsive
+    """
+    return {"status": "alive", "timestamp": datetime.now().isoformat()}
 
 

@@ -51,8 +51,8 @@ spec:
         # Health Checks - Kubernetes monitors application health
         livenessProbe:                 # Restart pod if app becomes unhealthy
           httpGet:
-            path: /health              # Health check endpoint
-            port: 8000                 # Port for health check
+            path: /health/live    # Use dedicated liveness endpoint
+            port: 8000
           initialDelaySeconds: 30      # Wait 30s before first check
           periodSeconds: 10            # Check every 10 seconds
           timeoutSeconds: 5            # 5s timeout for health check
@@ -60,8 +60,8 @@ spec:
         
         readinessProbe:                # Don't send traffic until app is ready
           httpGet:
-            path: /health              # Readiness check endpoint
-            port: 8000                 # Port for readiness check
+            path: /health/ready   # Use dedicated readiness endpoint
+            port: 8000
           initialDelaySeconds: 5       # Wait 5s before first check
           periodSeconds: 5             # Check every 5 seconds
           timeoutSeconds: 3            # 3s timeout for readiness check

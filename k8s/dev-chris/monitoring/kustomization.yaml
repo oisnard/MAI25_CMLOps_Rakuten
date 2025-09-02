@@ -11,7 +11,7 @@ metadata:
 
 # Namespace configuration
 resources:
-  - ../monitoring/namespace.yaml           # Create the namespace first
+  - namespace.yaml                         # Create the namespace first (same directory)
   
   # Application deployments
   - ../deployments/fastapi-deployment.yaml      # FastAPI application

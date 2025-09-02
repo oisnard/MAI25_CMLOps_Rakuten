@@ -1,0 +1,42 @@
+# Grafana Data Sources Configuration
+# This ConfigMap automatically configures Prometheus as a data source
+# when Grafana starts, eliminating the need for manual setup
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources-dev-chris     # ConfigMap name for Grafana
+  namespace: dev-chris                    # Deploy in your namespace
+  labels:
+    app: grafana-dev-chris                # App label for organization
+    component: monitoring                 # Component type
+    config: datasources                   # Configuration type
+data:
+  # The key 'datasources.yaml' will be mounted in Grafana's provisioning directory
+  # Grafana automatically reads this file and configures the data sources
+  datasources.yaml: |
+    apiVersion: 1                         # Configuration file version for Grafana provisioning
+    
+    datasources:
+      - name: Prometheus                  # Name Grafana will use for this data source
+        type: prometheus                  # Type of data source (Prometheus)
+        access: proxy                     # Grafana will proxy requests to Prometheus
+        url: http://prometheus-service-dev-chris:9090  # Internal service URL
+        isDefault: true                   # Make this the default data source
+        editable: true                    # Allow editing in Grafana UI
+        jsonData:                         # Additional Prometheus-specific configuration
+          timeInterval: "15s"            # How often Grafana queries Prometheus
+          queryTimeout: "60s"            # Maximum time to wait for query response
+          httpMethod: "POST"             # HTTP method for sending queries
+          manageAlerts: false            # Don't manage alerts from Grafana
+          alertmanagerUid: ""            # No alert manager configured yet
+        secureJsonData: {}               # No secure data needed for basic setup
+        
+        # Version control for the data source
+        version: 1                        # Data source version
+        
+        # Additional metadata
+        meta:
+          isDefault: true                 # Mark as default data source
+          type: "prometheus"              # Data source type
+          updated: "2025-09-02T21:00:00Z"  # Last update timestamp

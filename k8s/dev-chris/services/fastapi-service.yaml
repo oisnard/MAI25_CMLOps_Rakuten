@@ -1,0 +1,46 @@
+# FastAPI Service for Network Access
+# This file creates a Kubernetes service that provides stable network access
+# to your FastAPI pods, enabling load balancing and service discovery
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service-dev-chris        # Service name for network access
+  namespace: dev-chris                   # Deploy in your namespace
+  labels:
+    app: fastapi-dev-chris               # App label for organization
+    component: api                       # Component type
+    service: network                     # Service type label
+spec:
+  type: ClusterIP                        # Service type: internal cluster access
+  # ClusterIP provides internal access within the cluster
+  # Other options: NodePort (external access), LoadBalancer (cloud load balancer)
+  
+  ports:
+  - port: 8000                           # Port the service listens on
+    targetPort: 8000                     # Port to forward to pods
+    protocol: TCP                        # Protocol type
+    name: http                           # Port name for identification
+  
+  selector:
+    app: fastapi-dev-chris               # Select pods with this label
+    # This selector tells Kubernetes which pods to send traffic to
+    # Must match the labels in your deployment
+  
+  # Session Affinity (optional)
+  sessionAffinity: None                  # No session affinity (round-robin)
+  # Options: None, ClientIP (sticky sessions)
+  
+  # Load Balancing
+  loadBalancerSourceRanges: []          # Allow all source IPs
+  # You can restrict access by adding specific IP ranges here
+  
+  # Health Check
+  healthCheckNodePort: 0                 # Not used for ClusterIP services
+  
+  # Additional Metadata
+  annotations:
+    # Custom annotations for monitoring or other tools
+    prometheus.io/scrape: "true"         # Allow Prometheus to scrape metrics
+    prometheus.io/port: "8000"           # Port for metrics scraping
+    prometheus.io/path: "/metrics"       # Path for metrics endpoint

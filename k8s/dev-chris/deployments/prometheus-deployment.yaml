@@ -1,0 +1,114 @@
+# Prometheus Deployment for Metrics Collection
+# This file deploys Prometheus to collect metrics from your FastAPI application
+# and other services in your MLOps pipeline
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-dev-chris              # Unique deployment name
+  namespace: dev-chris                    # Deploy in your namespace
+  labels:
+    app: prometheus-dev-chris             # App identifier
+    component: monitoring                 # Component type
+    version: v1                           # Version for updates
+spec:
+  replicas: 1                             # Single Prometheus instance (can be scaled later)
+  selector:
+    matchLabels:
+      app: prometheus-dev-chris           # Must match pod template labels
+  template:
+    metadata:
+      labels:
+        app: prometheus-dev-chris         # Pod labels for service selection
+        component: monitoring             # Component label
+        version: v1                       # Version label
+    spec:
+      containers:
+      - name: prometheus                  # Container name
+        image: prom/prometheus:latest     # Official Prometheus image
+        imagePullPolicy: IfNotPresent     # Pull if not available locally
+        
+        ports:
+        - containerPort: 9090             # Prometheus web interface port
+          name: http                      # Port name for service reference
+          protocol: TCP                   # Protocol type
+        
+        # Command and arguments for Prometheus
+        command:
+        - /bin/prometheus                 # Prometheus binary
+        args:
+        - --config.file=/etc/prometheus/prometheus.yml      # Config file location
+        - --storage.tsdb.path=/prometheus                   # Data storage path
+        - --web.console.libraries=/etc/prometheus/console_libraries  # Console libraries
+        - --web.console.templates=/etc/prometheus/consoles  # Console templates
+        - --storage.tsdb.retention.time=200h                # Keep data for 200 hours
+        - --web.enable-lifecycle                            # Enable lifecycle management
+        - --web.enable-admin-api                            # Enable admin API
+        - --storage.tsdb.no-lockfile                        # Don't create lock file
+        
+        # Resource Management
+        resources:
+          requests:                        # Minimum resources
+            memory: "512Mi"               # 512 MB RAM minimum
+            cpu: "250m"                   # 0.25 CPU cores minimum
+          limits:                          # Maximum resources
+            memory: "1Gi"                 # 1 GB RAM maximum
+            cpu: "500m"                   # 0.5 CPU cores maximum
+        
+        # Health Checks
+        livenessProbe:                    # Restart if unhealthy
+          httpGet:
+            path: /-/healthy              # Health check endpoint
+            port: 9090                    # Health check port
+          initialDelaySeconds: 30         # Wait 30s before first check
+          periodSeconds: 15               # Check every 15 seconds
+          timeoutSeconds: 5               # 5s timeout
+        
+        readinessProbe:                   # Don't send traffic until ready
+          httpGet:
+            path: /-/ready                # Readiness check endpoint
+            port: 9090                    # Readiness check port
+          initialDelaySeconds: 5          # Wait 5s before first check
+          periodSeconds: 5                # Check every 5 seconds
+        
+        # Volume Mounts
+        volumeMounts:
+        - name: prometheus-config         # Mount configuration
+          mountPath: /etc/prometheus      # Path in container
+          readOnly: true                  # Read-only access
+        - name: prometheus-storage        # Mount data storage
+          mountPath: /prometheus          # Path in container
+        - name: prometheus-rules          # Mount alerting rules (optional)
+          mountPath: /etc/prometheus/rules  # Path in container
+          readOnly: true
+        
+        # Security Context
+        securityContext:
+          runAsNonRoot: true              # Don't run as root
+          runAsUser: 65534                # Run as nobody user
+          allowPrivilegeEscalation: false # No privilege escalation
+        
+        # Environment Variables
+        env:
+        - name: PROMETHEUS_CONFIG_PATH    # Config path environment variable
+          value: "/etc/prometheus"
+        - name: PROMETHEUS_STORAGE_PATH   # Storage path environment variable
+          value: "/prometheus"
+      
+      # Volumes
+      volumes:
+      - name: prometheus-config           # Configuration volume
+        configMap:                        # Use ConfigMap for configuration
+          name: prometheus-config-dev-chris  # ConfigMap name
+      - name: prometheus-storage          # Data storage volume
+        emptyDir: {}                      # Temporary storage (can be PersistentVolume later)
+      - name: prometheus-rules            # Alerting rules volume (optional)
+        configMap:                        # Use ConfigMap for rules
+          name: prometheus-rules-dev-chris  # Rules ConfigMap name
+      
+      # Restart Policy
+      restartPolicy: Always               # Always restart failed pods
+      
+      # Node Selection
+      nodeSelector:
+        kubernetes.io/os: linux           # Deploy on Linux nodes only

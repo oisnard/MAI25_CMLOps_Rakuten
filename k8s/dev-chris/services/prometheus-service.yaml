@@ -1,0 +1,43 @@
+# Prometheus Service for Monitoring Access
+# This file creates a Kubernetes service that provides network access
+# to your Prometheus instance for metrics collection and web interface
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service-dev-chris      # Service name for Prometheus access
+  namespace: dev-chris                    # Deploy in your namespace
+  labels:
+    app: prometheus-dev-chris             # App label for organization
+    component: monitoring                 # Component type
+    service: monitoring                   # Service type label
+spec:
+  type: ClusterIP                         # Service type: internal cluster access
+  # ClusterIP provides internal access within the cluster
+  # Prometheus doesn't need external access for basic monitoring
+  
+  ports:
+  - port: 9090                            # Port the service listens on
+    targetPort: 9090                      # Port to forward to Prometheus pods
+    protocol: TCP                         # Protocol type
+    name: http                            # Port name for identification
+  
+  selector:
+    app: prometheus-dev-chris             # Select Prometheus pods
+    # This selector tells Kubernetes which pods to send traffic to
+    # Must match the labels in your Prometheus deployment
+  
+  # Session Affinity (not needed for monitoring)
+  sessionAffinity: None                   # No session affinity needed
+  
+  # Load Balancing
+  loadBalancerSourceRanges: []           # Allow all source IPs
+  
+  # Health Check
+  healthCheckNodePort: 0                  # Not used for ClusterIP services
+  
+  # Additional Metadata for Monitoring
+  annotations:
+    # Custom annotations for monitoring tools
+    prometheus.io/scrape: "false"         # Don't scrape Prometheus itself via this service
+    # Prometheus self-monitoring is handled in the config file

@@ -1,0 +1,86 @@
+# Kustomization Configuration for dev-chris MLOps Stack
+# This file organizes all your Kubernetes resources and makes deployment easy
+# Use 'kubectl apply -k .' to deploy everything at once
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: mlops-dev-chris                    # Project name
+  namespace: dev-chris                     # Target namespace
+
+# Namespace configuration
+resources:
+  - ../monitoring/namespace.yaml           # Create the namespace first
+  
+  # Application deployments
+  - ../deployments/fastapi-deployment.yaml      # FastAPI application
+  - ../deployments/prometheus-deployment.yaml   # Prometheus monitoring
+  - ../deployments/grafana-deployment.yaml      # Grafana dashboards
+  
+  # Network services
+  - ../services/fastapi-service.yaml            # FastAPI network access
+  - ../services/prometheus-service.yaml         # Prometheus network access
+  - ../services/grafana-service.yaml            # Grafana network access
+  
+  # Configuration
+  - ../configmaps/prometheus-config.yaml        # Prometheus monitoring targets
+  - ../configmaps/grafana-datasources.yaml      # Grafana data sources
+  - ../configmaps/grafana-dashboards.yaml       # Grafana dashboards
+
+# Common labels for all resources
+commonLabels:
+  app.kubernetes.io/name: mlops-dev-chris      # Application name
+  app.kubernetes.io/instance: dev-chris        # Instance identifier
+  app.kubernetes.io/version: v1                # Version
+  app.kubernetes.io/component: mlops           # Component type
+  app.kubernetes.io/part-of: rakuten-project   # Part of larger project
+  app.kubernetes.io/managed-by: kustomize      # Managed by tool
+
+# Namespace for all resources
+namespace: dev-chris
+
+# Images to use (if you want to specify specific versions)
+# images:
+# - name: mai25_cmlops_rakuten_api
+#   newTag: latest
+# - name: prom/prometheus
+#   newTag: latest
+# - name: grafana/grafana
+#   newTag: latest
+
+# ConfigMap and Secret generators (optional)
+# configMapGenerator:
+# - name: app-config
+#   literals:
+#   - ENVIRONMENT=kubernetes
+#   - LOG_LEVEL=info
+
+# Secret generator (optional)
+# secretGenerator:
+# - name: app-secrets
+#   literals:
+#   - API_KEY=your-secret-key
+#   - DATABASE_URL=your-db-url
+
+# Patches for customization (optional)
+# patches:
+# - target:
+#     kind: Deployment
+#     name: fastapi-dev-chris
+#   patch: |-
+#     - op: add
+#       path: /spec/template/spec/containers/0/env/-
+#       value:
+#         name: CUSTOM_ENV
+#         value: "custom-value"
+
+# Variables for templating (optional)
+# vars:
+# - name: APP_VERSION
+#   objref:
+#     kind: ConfigMap
+#     name: app-config
+#     apiVersion: v1
+#   fieldref:
+#     fieldpath: data.version

@@ -1,0 +1,121 @@
+# Grafana Deployment for Monitoring Visualization
+# This file deploys Grafana with automatic configuration for Prometheus
+# and pre-loaded dashboards - no manual setup required
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-dev-chris                  # Unique deployment name
+  namespace: dev-chris                     # Deploy in your namespace
+  labels:
+    app: grafana-dev-chris                 # App identifier
+    component: monitoring                  # Component type
+    version: v1                            # Version for updates
+spec:
+  replicas: 1                              # Single Grafana instance (can be scaled later)
+  selector:
+    matchLabels:
+      app: grafana-dev-chris               # Must match pod template labels
+  template:
+    metadata:
+      labels:
+        app: grafana-dev-chris             # Pod labels for service selection
+        component: monitoring              # Component label
+        version: v1                        # Version label
+    spec:
+      containers:
+      - name: grafana                      # Container name
+        image: grafana/grafana:latest      # Official Grafana image
+        imagePullPolicy: IfNotPresent      # Pull if not available locally
+        
+        ports:
+        - containerPort: 3000              # Grafana web interface port
+          name: http                       # Port name for service reference
+          protocol: TCP                    # Protocol type
+        
+        # Environment Variables for Automatic Configuration
+        env:
+        - name: GF_SECURITY_ADMIN_USER     # Set admin username automatically
+          value: "admin"
+        - name: GF_SECURITY_ADMIN_PASSWORD # Set admin password automatically
+          value: "admin"
+        - name: GF_USERS_ALLOW_SIGN_UP     # Disable public user registration
+          value: "false"
+        - name: GF_AUTH_ANONYMOUS_ENABLED  # Disable anonymous access
+          value: "false"
+        - name: GF_SERVER_ROOT_URL         # Base URL for Grafana
+          value: "http://localhost:3000"
+        - name: GF_SERVER_HTTP_PORT        # Port configuration
+          value: "3000"
+        
+        # Resource Management
+        resources:
+          requests:                         # Minimum resources
+            memory: "256Mi"                # 256 MB RAM minimum
+            cpu: "250m"                    # 0.25 CPU cores minimum
+          limits:                           # Maximum resources
+            memory: "512Mi"                # 512 MB RAM maximum
+            cpu: "500m"                    # 0.5 CPU cores maximum
+        
+        # Health Checks
+        livenessProbe:                     # Restart if unhealthy
+          httpGet:
+            path: /api/health              # Health check endpoint
+            port: 3000                     # Health check port
+          initialDelaySeconds: 60          # Wait 60s before first check
+          periodSeconds: 30                # Check every 30 seconds
+          timeoutSeconds: 10               # 10s timeout
+        
+        readinessProbe:                    # Don't send traffic until ready
+          httpGet:
+            path: /api/health              # Readiness check endpoint
+            port: 3000                     # Readiness check port
+          initialDelaySeconds: 30          # Wait 30s before first check
+          periodSeconds: 10                # Check every 10 seconds
+          timeoutSeconds: 5                # 5s timeout
+        
+        # Volume Mounts for Configuration
+        volumeMounts:
+        - name: grafana-datasources        # Mount data sources configuration
+          mountPath: /etc/grafana/provisioning/datasources  # Path in container
+          readOnly: true                   # Read-only access
+        - name: grafana-dashboards         # Mount dashboards configuration
+          mountPath: /etc/grafana/provisioning/dashboards  # Path in container
+          readOnly: true                   # Read-only access
+        - name: grafana-storage            # Mount persistent storage
+          mountPath: /var/lib/grafana      # Path in container
+        
+        # Security Context
+        securityContext:
+          runAsNonRoot: true               # Don't run as root
+          runAsUser: 472                   # Run as grafana user (UID 472)
+          allowPrivilegeEscalation: false  # No privilege escalation
+          readOnlyRootFilesystem: false    # Need write access for storage
+        
+        # Lifecycle Hooks (optional)
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 10"]  # Graceful shutdown
+        
+      # Volumes for Configuration and Storage
+      volumes:
+      - name: grafana-datasources          # Data sources configuration volume
+        configMap:                         # Use ConfigMap for configuration
+          name: grafana-datasources-dev-chris  # ConfigMap name
+      - name: grafana-dashboards           # Dashboards configuration volume
+        configMap:                         # Use ConfigMap for configuration
+          name: grafana-dashboards-dev-chris  # ConfigMap name
+      - name: grafana-storage              # Persistent storage volume
+        emptyDir: {}                       # Temporary storage (can be PersistentVolume later)
+      
+      # Restart Policy
+      restartPolicy: Always                # Always restart failed pods
+      
+      # Node Selection
+      nodeSelector:
+        kubernetes.io/os: linux            # Deploy on Linux nodes only
+      
+      # Image Pull Secrets (if using private registry)
+      # imagePullSecrets:
+      # - name: regcred

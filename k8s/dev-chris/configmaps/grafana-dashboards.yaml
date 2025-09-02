@@ -1,0 +1,234 @@
+# Grafana Dashboards Configuration
+# This ConfigMap automatically loads monitoring dashboards when Grafana starts
+# No manual dashboard import required - everything appears automatically
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-dev-chris      # ConfigMap name for dashboards
+  namespace: dev-chris                    # Deploy in your namespace
+  labels:
+    app: grafana-dev-chris                # App label for organization
+    component: monitoring                 # Component type
+    config: dashboards                    # Configuration type
+data:
+  # The key 'dashboards.yaml' will be mounted in Grafana's provisioning directory
+  # Grafana automatically reads this file and loads the specified dashboards
+  dashboards.yaml: 
+    apiVersion: 1                         # Configuration file version for Grafana provisioning
+    
+    providers:                             # Dashboard providers configuration
+      - name: 'default'                   # Name of this dashboard provider
+        orgId: 1                          # Organization ID (1 = default org)
+        folder: ''                         # Empty = load dashboards in root folder
+        type: file                         # Load dashboards from files
+        disableDeletion: false            # Allow deleting dashboards from UI
+        updateIntervalSeconds: 10         # Check for new dashboards every 10 seconds
+        allowUiUpdates: true              # Allow editing dashboards in Grafana UI
+        options:
+          path: /etc/grafana/provisioning/dashboards  # Where to look for dashboard files
+  
+  # FastAPI Monitoring Dashboard
+  # This dashboard will automatically appear in Grafana
+  fastapi-monitoring.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "gnetId": null,
+      "graphTooltip": 0,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "vis": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholds": {
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "expr": "rate(http_requests_total[5m])",
+              "interval": "",
+              "legendFormat": "{{method}} {{route}}",
+              "refId": "A"
+            }
+          ],
+          "title": "API Request Rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "vis": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholds": {
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+              "interval": "",
+              "legendFormat": "95th percentile",
+              "refId": "A"
+            }
+          ],
+          "title": "Response Time (95th percentile)",
+          "type": "timeseries"
+        }
+      ],
+      "schemaVersion": 27,
+      "style": "dark",
+      "tags": ["fastapi", "monitoring", "mlops"],
+      "templating": {
+        "list": []
+      },
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "FastAPI Monitoring - dev-chris",
+      "uid": "fastapi-monitoring-dev-chris",
+      "version": 1
+    }

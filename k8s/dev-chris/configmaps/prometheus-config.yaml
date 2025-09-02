@@ -1,0 +1,78 @@
+# Prometheus Configuration for MLOps Monitoring
+# This ConfigMap contains the Prometheus configuration file
+# It defines what targets to monitor and how often to collect metrics
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config-dev-chris      # ConfigMap name for Prometheus
+  namespace: dev-chris                   # Deploy in your namespace
+  labels:
+    app: prometheus-dev-chris            # App label for organization
+    component: monitoring                # Component type
+    config: prometheus                   # Configuration type
+data:
+  # The key 'prometheus.yml' will be mounted as a file in the Prometheus container
+  prometheus.yml: 
+    # Prometheus configuration file
+    # This file tells Prometheus what to monitor and how often
+    
+    global:
+      scrape_interval: 15s               # How often to collect metrics from all targets
+      evaluation_interval: 15s           # How often to evaluate alerting rules
+      scrape_timeout: 10s                # Maximum time to wait for target response
+    
+    # Alerting configuration (optional for now)
+    # alerting:
+    #   alertmanagers:
+    #     - static_configs:
+    #         - targets:
+    #           # - alertmanager:9093
+    
+    # Rule files (optional for now)
+    # rule_files:
+    #   # - "first_rules.yml"
+    #   # - "second_rules.yml"
+    
+    # Scrape configuration - defines what targets to monitor
+    scrape_configs:
+      # Job 1: Monitor your FastAPI application
+      - job_name: 'fastapi-dev-chris'    # Job name for identification
+        static_configs:
+          - targets: ['fastapi-service-dev-chris:8000']  # Target your FastAPI service
+        metrics_path: /metrics            # Endpoint where metrics are exposed
+        scrape_interval: 5s               # Collect API metrics every 5 seconds
+        scrape_timeout: 3s                # 3 second timeout for API metrics
+        
+        # Relabeling rules for better metric organization
+        relabel_configs:
+        - source_labels: [__address__]
+          target_label: instance
+          regex: '([^:]+)(?::\d+)?'
+          replacement: '${1}'
+        
+        - source_labels: [__meta_kubernetes_service_name]
+          target_label: kubernetes_service_name
+      
+      # Job 2: Monitor Prometheus itself (self-monitoring)
+      - job_name: 'prometheus-dev-chris'  # Self-monitoring job
+        static_configs:
+          - targets: ['localhost:9090']   # Monitor Prometheus on its own port
+        scrape_interval: 15s              # Check Prometheus health every 15s
+        
+        # Relabeling for self-monitoring
+        relabel_configs:
+        - source_labels: [__address__]
+          target_label: instance
+          regex: '([^:]+)(?::\d+)?'
+          replacement: '${1}'
+      
+      # Job 3: Monitor Kubernetes nodes (optional)
+      - job_name: 'kubernetes-nodes'      # Monitor cluster nodes
+        kubernetes_sd_configs:
+        - role: node                      # Discover Kubernetes nodes
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_node_name]
+          target_label: node
+        - source_labels: [__meta_kubernetes_node_label_kubernetes_io_hostname]
+          target_label: hostname

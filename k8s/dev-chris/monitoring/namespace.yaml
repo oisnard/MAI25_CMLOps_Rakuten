@@ -1,0 +1,16 @@
+# Namespace Configuration for dev-chris Branch
+# This file defines the Kubernetes namespace that will isolate your deployment
+# from other deployments on the same cluster (like your collaborator's work)
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev-chris                    # Unique namespace name for your branch
+  labels:
+    name: dev-chris                  # Label for easy identification
+    purpose: mlops-deployment        # Purpose of this namespace
+    branch: dev-chris               # Git branch identifier
+    owner: christian                 # Owner identifier
+spec:
+  # No additional specifications needed for basic namespace
+  # Kubernetes will automatically create the namespace with default settings

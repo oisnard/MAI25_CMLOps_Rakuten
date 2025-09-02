@@ -1,0 +1,92 @@
+# FastAPI Deployment for MLOps Pipeline
+# This file defines how your FastAPI application runs in Kubernetes
+# It includes resource management, health checks, and scaling configuration
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-dev-chris              # Unique deployment name in your namespace
+  namespace: dev-chris                 # Deploy to your isolated namespace
+  labels:
+    app: fastapi-dev-chris             # App identifier for service selection
+    version: v1                        # Version for rolling updates
+    component: api                     # Component type for organization
+spec:
+  replicas: 2                          # Number of pod replicas for high availability
+  selector:
+    matchLabels:
+      app: fastapi-dev-chris           # Must match pod template labels
+  template:
+    metadata:
+      labels:
+        app: fastapi-dev-chris         # Pod labels for service selection
+        version: v1                    # Version label for updates
+        component: api                 # Component label for organization
+    spec:
+      containers:
+      - name: fastapi                  # Container name within the pod
+        image: mai25_cmlops_rakuten_api:latest  # Your Docker image
+        imagePullPolicy: Never         # Use local image (no registry pull)
+        ports:
+        - containerPort: 8000          # Port your FastAPI app listens on
+          name: http                   # Port name for service reference
+          protocol: TCP                # Protocol type
+        
+        # Environment Variables
+        env:
+        - name: PYTHONPATH             # Python path for imports
+          value: "/app"
+        - name: ENVIRONMENT            # Environment identifier
+          value: "kubernetes"
+        
+        # Resource Management - Prevents resource starvation
+        resources:
+          requests:                     # Minimum resources guaranteed
+            memory: "256Mi"            # 256 MB RAM minimum
+            cpu: "250m"                # 0.25 CPU cores minimum
+          limits:                       # Maximum resources allowed
+            memory: "512Mi"            # 512 MB RAM maximum
+            cpu: "500m"                # 0.5 CPU cores maximum
+        
+        # Health Checks - Kubernetes monitors application health
+        livenessProbe:                 # Restart pod if app becomes unhealthy
+          httpGet:
+            path: /health              # Health check endpoint
+            port: 8000                 # Port for health check
+          initialDelaySeconds: 30      # Wait 30s before first check
+          periodSeconds: 10            # Check every 10 seconds
+          timeoutSeconds: 5            # 5s timeout for health check
+          failureThreshold: 3          # Restart after 3 failures
+        
+        readinessProbe:                # Don't send traffic until app is ready
+          httpGet:
+            path: /health              # Readiness check endpoint
+            port: 8000                 # Port for readiness check
+          initialDelaySeconds: 5       # Wait 5s before first check
+          periodSeconds: 5             # Check every 5 seconds
+          timeoutSeconds: 3            # 3s timeout for readiness check
+        
+        # Volume Mounts for Configuration
+        volumeMounts:
+        - name: app-config             # Mount configuration volume
+          mountPath: /app/config       # Path in container
+          readOnly: true               # Read-only access
+        
+        # Security Context
+        securityContext:
+          runAsNonRoot: true           # Don't run as root
+          runAsUser: 1000              # Run as user ID 1000
+          allowPrivilegeEscalation: false  # No privilege escalation
+        
+      # Volumes for Configuration
+      volumes:
+      - name: app-config               # Volume name
+        configMap:                     # Use ConfigMap for configuration
+          name: fastapi-config-dev-chris  # ConfigMap name
+      
+      # Restart Policy
+      restartPolicy: Always            # Always restart failed pods
+      
+      # Node Selection (optional)
+      nodeSelector:
+        kubernetes.io/os: linux        # Deploy on Linux nodes only

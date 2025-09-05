@@ -104,6 +104,7 @@ set -a && source .env && set +a && envsubst < docker-compose.template.yml > dock
 | Prometheus  | 9090 | Monitoring des métriques API           |
 | Grafana     | 3000 | Visualisation des métriques Prometheus |
 
+
 ---
 ### ▶️ Lancer l’environnement
 1. Prérequis

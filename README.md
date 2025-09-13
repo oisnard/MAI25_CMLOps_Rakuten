@@ -205,7 +205,7 @@ tests/
 ```
 ▶️ Exécution des tests
 
-Assure-toi d’avoir l'instance EC2 avec GPU, puis lance les tests avec :
+S'assurer d’avoir lancé l'instance EC2 avec GPU, puis exécuter :
 ```
 ./scripts/run_ci.sh
 ```

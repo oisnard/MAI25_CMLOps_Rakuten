@@ -2,19 +2,19 @@ MAI25_CMLOPS : project Rakuten
 ==============================
 
 Projet pédagogique réalisé dans le cadre de la formation MLOps de DataScientest (Cohorte MAI 2025), axé sur la mise en place d’une architecture MLOps complète pour le traitement et la classification de données produits Rakuten dans le cadre du challenge ens-data : https://challengedata.ens.fr/participants/challenges/35/ .
-Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier ISNARD / Julien TREVISAN / Loïc RAMAYE lors de leur formation Data Scientist (cohorte Juin 2025) et qui avaient permis d'obtenir la première place au classement public et privé du challenge. Dans le cadre de ce projet, des modèles plus légers ont été mises en place afin de réduire les coûts d'instance AWS (déploiement sur instance EC2 avec GPU).
+Les modèles déployés sont inspirés de ceux définis par l'équipe Olivier ISNARD / Julien TREVISAN / Loïc RAMAYE lors de leur formation Data Scientist (cohorte Juin 2024) et qui avaient permis d'obtenir la première place au classement public et privé du challenge. Dans le cadre de ce projet, des modèles plus légers ont été mises en place afin de réduire les coûts d'instance AWS (déploiement sur instance EC2 avec GPU).
 
 
 ---
 ## 🚀 Objectifs réalisés 
 
-- Mettre en place un pipeline complet de Machine Learning avec Airflow.
-- Intégrer des étapes de data loading, preprocessing, entraînement, évaluation et déploiement.
-- Suivre les expériences via MLflow.
-- Conteneuriser l’environnement avec Docker.
-- Fournir une API de prédiction REST sécurisée.
-- Suivre les versions de données avec DVC
-- Tests unitaires
+- Construire un pipeline ML complet (data loading → preprocessing → entraînement → évaluation → déploiement) avec **Airflow**  
+- Suivi des expériences via **MLflow**  
+- Suivi du drift des données avec **Evidently**
+- Conteneuriser les composants (Docker)  
+- Fournir une API REST prédictive sécurisée et déployée sur K8S (avec scalability)
+- Versionner les données avec **DVC**  
+- Mettre en place des tests unitaires et une intégration continue (CI) via **GitHub Actions** pour garantir la fiabilité du pipeline
 
 ---
 ## 🧭 Schéma d’Architecture MLOps simplifié
@@ -25,58 +25,37 @@ Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier IS
 
 ```bash
 .
-├── airflow/                   # Composants liés à Airflow
-│   ├── dags/                 # DAG principal orchestrant le pipeline
-│   │   └── rakuten_dags.py
-│
-├── data/                     # Données versionnées avec DVC
-│   ├── raw/                 # Données brutes (ex : images, CSV initiaux)
-│   ├── processed/           # Données traitées (X_train, y_train, etc.)
-│   ├── processed.dvc        # Fichier DVC de suivi de `/processed`
-│   ├── raw.dvc              # Fichier DVC de suivi de `/raw`
-│   └── .gitignore           # Évite de traquer les gros fichiers localement
-│
-├── docker/                   # Dockerfiles spécifiques à chaque étape
-│   ├── prometheus.yml        # Configuration du service Prometheus
-|   ├── Dockerfile.airflow
-│   ├── Dockerfile.api
-│   ├── Dockerfile.dataloading
-│   ├── Dockerfile.evaluate
-│   ├── Dockerfile.mlflow
-│   ├── Dockerfile.preprocessing
-│   ├── Dockerfile.train
-│   ├── requirements-airflow.txt     # Dépendances Airflow
-│   ├── requirements-api.txt         # Dépendances FastAPI
-│   ├── requirements-dataloading.txt
-│   ├── requirements-evaluate.txt
-│   ├── requirements-mlflow.txt
-│   ├── requirements-preprocessing.txt
-│   └── requirements-train.txt
-├── docker-compose-template.yml        # Template du docker compose pour générer docker compose selon GPU ou CPU (selon fichier .env)
-├── docker-compose.yml                 # Orchestration des services via Docker Compose
-│
-├── models/                   # Modèles entraînés (.pkl ou autres)
-│
-├── mlruns/                   # Répertoire d’expérimentation MLflow (tracking local)
-│
-├── params.yaml               # Paramètres globaux pour le pipeline (modèle, seed, split, etc.)
-│
-├── src/                      # Code source modulaire pour chaque étape
-│   ├── dataloading/         # Scripts pour charger les données brutes
-│   ├── preprocessing/       # Feature engineering, normalisation, etc.
-│   ├── training/            # Entraînement de modèles
-│   ├── evaluation/          # Évaluation de performance
-│   └── utils/               # Fonctions utilitaires (log, I/O, etc.)
-│
-├── tests/                    # Tests unitaires Pytest pour chaque module
-│   ├── test_dataloading.py
-│   ├── test_preprocessing.py
-│   ├── test_training.py
-│   ├── test_evaluation.py
-│   └── conftest.py
-│
-├── .dvc/                     # Répertoire interne de configuration DVC
-├── .dvcignore                # Équiv. de .gitignore pour DVC
+├── airflow/
+│   ├── dags/                  # DAGs Airflow (full pipeline, datastreams, trafic)
+│   └── plugins/
+├── data/
+│   ├── raw/                   # images + CSV ENS Data (DVC)
+│   ├── processed/             # jeux train/val/test, features, prédictions (DVC)
+│   ├── stream/{raw,processed} # flux simulés
+│   ├── monitoring_sample/     # échantillons pour data/drift monitoring
+│   └── dataviz/               # schémas & assets pour streamlit
+├── docker/ …                  # Dockerfiles (api, airflow, train{_gpu}, preprocess, features{_gpu}, evaluate{_gpu}, mlflow, streamlit, evidently, datastreams, traffic) + prometheus/grafana + requirements
+├── k8s/ …                     # manifests K8s (deployment/service/ingress/hpa, PV/PVC, monitoring Prometheus/Grafana, RBAC, templates)
+├── src/
+│   ├── api/                   # FastAPI (JWT, middleware, service)
+│   ├── data/                  # import/make_dataset, preprocessing, datastreams
+│   ├── features/              # build_features
+│   ├── models/                # train/evaluate/predict (texte, image, fusion)
+│   ├── streamlit/             # app Streamlit
+│   ├── tools/                 # utilitaires (réseau, datastream)
+│   ├── traffic_generation/    # Generation de requêtes API pour tester scale up/down K3S api.
+│   └── visualization/         # fonctions de visualisation
+├── tests/                     # Tests unitaires pour la CI
+├── models/                    # artefacts modèles (poids versionnés via DVC)
+├── metrics/                   # rapports de classification (CSV/JSON)
+├── monitoring/utils/          # scripts Evidently (drift report)
+├── docker-compose.template.yml
+├── params.yaml                # Paramètres globaux pour le pipeline (modèle, seed, split, etc.)
+├── pytest.ini
+├── scripts/                   # CI locale, k3s deploy/cleanup, monitoring, checks
+├── generate_compose.sh        # Pour générer le manifeste docker-compose.yml
+├── setup.py
+├── LICENSE
 ├── .env                      # Variables d’environnement (ex: BASE_DIR)
 └── README.md                 # Documentation du projet (ce fichier)
 ```
@@ -90,82 +69,39 @@ Les modèles déployés sont dérivés de ceux définis par l'équipe Olivier IS
 | `.env`               | Définit les variables d’environnement Docker (base\_dir, etc.) |
 <br>Pour générer le fichier docker-compose.yml à partir du `docker-compose-template.yml`, il faut exécuter la commande : 
 ```
-set -a && source .env && set +a && envsubst < docker-compose.template.yml > docker-compose.yml
+./generate_compose.sh
 ```
 ---
 ### 🧰 Services
-| Service     | Port | Description                            |
-| ----------- | ---- | ---------------------------------------|
-| Airflow UI  | 8080 | Orchestration du pipeline              |
-| MLflow      | 5000 | Tracking des expériences               |
-| API FastAPI | 8000 | Endpoint de prédiction                 |
-| PostgreSQL  |      | Backend Airflow & MLflow               |
-| Redis       |      | Message broker Airflow (Celery)        |
-| Prometheus  | 9090 | Monitoring des métriques API           |
-| Grafana     | 3000 | Visualisation des métriques Prometheus |
+| Service     | Port  | Description                            |
+| ----------- | ----- | ---------------------------------------|
+| Airflow UI  | 8080  | Orchestration du pipeline              |
+| MLflow      | 5000  | Tracking des expériences               |
+| API FastAPI | 8000  | Endpoint de prédiction                 |
+| Evidently   | 9000  | Suivi du data drift                    |
+| Prometheus  | 90900 | Monitoring des métriques API           |
+| Grafana     | 30300 | Visualisation des métriques Prometheus |
+| Streamlit   | 8501  | Application streamlit - Projet         |
 
 
 ---
 ### ▶️ Lancer l’environnement
 1. Prérequis
 
-    docker installé
+    Docker installé
 
-    Un fichier .env avec les variables suivantes : 
-    ```
-    # Description: Environment variables for the Rakuten project
-    # The account must be subscribed to the challenge https://challengedata.ens.fr/participants/challenges/35/
-    ENSDATA_LOGIN=
-    ENSDATA_PASSWORD=
+    Créer un fichier .env basé sur .env_template. 
 
-    # The path to the directory where the data is stored
-    DATA_RAW_DIR="./data/raw"
-    # The path to the directory where the the images of train dataset are stored
-    DATA_RAW_IMAGES_TRAIN_DIR="./data/raw/image_train"
-    # The path to the directory where the the images of test dataset are stored
-    DATA_RAW_IMAGES_TEST_DIR="./data/raw/image_test"
-
-    # The path to the directory where the processed data will be stored
-    DATA_PROCESSED_DIR="./data/processed"
-    # The path to the directory where the model will be stored
-    MODEL_DIR="./models"
-    # The path to the directory where the logs will be stored
-    LOGS_DIR="./logs"
-    # The path to the directory where the scores of model evaluation will be stored
-    METRICS_DIR="./metrics"
-
-    # Definition of the secret key for signing JWT tokens
-    # This key should be kept secret and not shared publicly
-    # It is used to ensure the integrity and authenticity of the JWT tokens
-    # It is recommended to use a strong, random key for production environments
-
-    JWT_SECRET_KEY = 
-
-    FERNET_KEY=
-
-    # Local directory where is stored the projet
-    BASE_DIR = 
-
-    # The Dockerfile to use for training the model
-    # If GPU is available, then set Dockerfile.evaluate_gpu
-    DOCKERFILE_TRAIN=docker/Dockerfile.train
-
-    # The Dockerfile to use for evaluating the model
-    # If GPU is available, then set Dockerfile.evaluate_gpu
-    DOCKERFILE_EVALUATE=docker/Dockerfile.evaluate
-
-    # The Dockerfile to use for launching API rest with the model
-    # If GPU is available, then set Dockerfile.api_gpu
-    DOCKERFILE_API=docker/Dockerfile.api
-    ```
 2. Lancement des services
     ```
-    docker compose up --build
+    ./script/deploy_k3s.sh     # Déploiement de l'api sur pod K3S
+    ./script/deploy_monitoring.sh # Déploiement du monitoring de l'API via Prometheus/Grafana 
+    docker compose up --build  # Lancer les autres services (airflow, mlflow, evidently, streamlit)
     ```
     Airflow sera accessible sur localhost:8080, et MLflow sur localhost:5000.
-    Prometheus sera accessible sur http://localhost:9090
+    Prometheus sera accessible sur http://localhost:90900
     (Permet de visualiser les métriques exposées par l’API ou Airflow via /metrics)
-    Grafana sera accessible sur http://localhost:3000 (Identifiants par défaut : admin / admin)
+    Grafana sera accessible sur http://localhost:30300 (Identifiants par défaut : admin / admin)
 
 ---
 ### ⚙️ Pipelines Airflow
@@ -222,7 +158,7 @@ Prometheus collecte les métriques de l’API toutes les 15 secondes.
 Interface accessible via :
 
 ```
-http://localhost:9090
+http://localhost:90900
 ```
 
 Exemple de requête PromQL à exécuter dans l’interface :
@@ -240,7 +176,7 @@ Grafana permet de créer des dashboards personnalisés à partir des données Pr
 Accès à Grafana :
 
 ```
-http://localhost:3000
+http://localhost:30300
 ```
 
 Identifiants par défaut :
@@ -251,7 +187,7 @@ Pour configurer :
 	1.	Aller dans “Connections > Data sources”.
 	2.	Cliquer sur “Add data source”.
 	3.	Sélectionner Prometheus.
-	4.	Renseigner l’URL : http://prometheus:9090.
+	4.	Renseigner l’URL : http://prometheus:90900.
 	5.	Créer des panels à partir de requêtes PromQL (ex: http_requests_total).
 
 ---
@@ -269,9 +205,9 @@ tests/
 ```
 ▶️ Exécution des tests
 
-Assure-toi d’avoir installé pytest (via pip install pytest ou via un requirements.txt), puis lance les tests avec :
+Assure-toi d’avoir l'instance EC2 avec GPU, puis lance les tests avec :
 ```
-python -m pytest
+./scripts/run_ci.sh
 ```
 
 ### Installation k3s

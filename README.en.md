@@ -82,7 +82,7 @@ In this project, lighter models were implemented in order to reduce AWS instance
 | MLflow      | 5000  | Experiment tracking                   |
 | API FastAPI | 8000  | Prediction endpoint                   |
 | Evidently   | 9000  | Data drift monitoring                 |
-| Prometheus  | 90900 | API metrics monitoring                |
+| Prometheus  | 30900 | API metrics monitoring                |
 | Grafana     | 30300 | Prometheus metrics visualization      |
 | Streamlit   | 8501  | Streamlit project app                 |
 
@@ -99,7 +99,7 @@ In this project, lighter models were implemented in order to reduce AWS instance
    ./scripts/deploy_monitoring.sh # Deploy API monitoring with Prometheus/Grafana
    docker compose up --build      # Launch other services (Airflow, MLflow, Evidently, Streamlit)
    ```
-
+   (localhost in case of local or EC2 public IP address)
    - Airflow → [http://localhost:8080](http://localhost:8080)  
    - MLflow → [http://localhost:5000](http://localhost:5000)  
    - Prometheus → [http://localhost:30900](http://localhost:90900) (metrics from API & Airflow via `/metrics`)  

@@ -79,7 +79,7 @@ Les modèles déployés sont inspirés de ceux définis par l'équipe Olivier IS
 | MLflow      | 5000  | Tracking des expériences               |
 | API FastAPI | 8000  | Endpoint de prédiction                 |
 | Evidently   | 9000  | Suivi du data drift                    |
-| Prometheus  | 90900 | Monitoring des métriques API           |
+| Prometheus  | 30900 | Monitoring des métriques API           |
 | Grafana     | 30300 | Visualisation des métriques Prometheus |
 | Streamlit   | 8501  | Application streamlit - Projet         |
 

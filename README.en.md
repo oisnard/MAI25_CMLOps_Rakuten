@@ -102,7 +102,7 @@ In this project, lighter models were implemented in order to reduce AWS instance
 
    - Airflow → [http://localhost:8080](http://localhost:8080)  
    - MLflow → [http://localhost:5000](http://localhost:5000)  
-   - Prometheus → [http://localhost:90900](http://localhost:90900) (metrics from API & Airflow via `/metrics`)  
+   - Prometheus → [http://localhost:30900](http://localhost:90900) (metrics from API & Airflow via `/metrics`)  
    - Grafana → [http://localhost:30300](http://localhost:30300) (default login: `admin / admin`)  
 
 ---
@@ -161,7 +161,7 @@ Prometheus scrapes API metrics every 15 seconds.
 UI accessible at:
 
 ```
-http://localhost:90900
+http://localhost:30900
 ```
 
 Example PromQL query:

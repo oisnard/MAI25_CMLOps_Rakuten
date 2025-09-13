@@ -99,9 +99,9 @@ Les modèles déployés sont inspirés de ceux définis par l'équipe Olivier IS
     docker compose up --build  # Lancer les autres services (airflow, mlflow, evidently, streamlit)
     ```
     Airflow sera accessible sur localhost:8080, et MLflow sur localhost:5000.
-    Prometheus sera accessible sur http://localhost:90900
+    Prometheus sera accessible sur http://localhost:90900 (localhost in case of local or EC2 public IP address))
     (Permet de visualiser les métriques exposées par l’API ou Airflow via /metrics)
-    Grafana sera accessible sur http://localhost:30300 (Identifiants par défaut : admin / admin)
+    Grafana sera accessible sur http://localhost:30300 (Identifiants par défaut : admin / admin) (localhost in case of local or EC2 public IP address)
 
 ---
 ### ⚙️ Pipelines Airflow
@@ -158,7 +158,7 @@ Prometheus collecte les métriques de l’API toutes les 15 secondes.
 Interface accessible via :
 
 ```
-http://localhost:90900
+http://localhost:30900
 ```
 
 Exemple de requête PromQL à exécuter dans l’interface :
@@ -187,7 +187,7 @@ Pour configurer :
 	1.	Aller dans “Connections > Data sources”.
 	2.	Cliquer sur “Add data source”.
 	3.	Sélectionner Prometheus.
-	4.	Renseigner l’URL : http://prometheus:90900.
+	4.	Renseigner l’URL : http://prometheus:30900.
 	5.	Créer des panels à partir de requêtes PromQL (ex: http_requests_total).
 
 ---

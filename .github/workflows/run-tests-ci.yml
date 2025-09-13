@@ -21,8 +21,8 @@ jobs:
 
       - name: Run tests on EC2
         run: |
-          echo "🔎 Connexion à l’instance ec2-g4dn-xlarge (13.61.175.197)"
-          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.61.175.197 << 'EOF'
+          echo "🔎 Connexion à l’instance ec2-g4dn-xlarge (13.53.41.49)"
+          ssh -o StrictHostKeyChecking=no -i ec2_key ubuntu@13.53.41.49 << 'EOF'
             set -e
             cd ~/mai25_CMLops/MAI25_CMLOps_Rakuten
             docker compose down
